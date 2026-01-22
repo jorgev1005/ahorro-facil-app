@@ -7,8 +7,13 @@ import PaymentModal from './components/PaymentModal'
 import ReceiptCard from './components/ReceiptCard'
 import CreateBolsoModal from './components/CreateBolsoModal'
 import ParticipantDetailsModal from './components/ParticipantDetailsModal'
+import PayoutReceiptCard from './components/PayoutReceiptCard'
+import PayoutModal from './components/PayoutModal'
+import LiquidityIndicator from './components/LiquidityIndicator'
+import BolsoReport from './components/BolsoReport'
 import { generateWhatsAppMessage, openWhatsApp } from './utils/whatsapp'
 import { bolsoService } from './services/api'
+import { formatDate } from './utils/formatters'
 import './App.css'
 
 function App() {
@@ -20,7 +25,10 @@ function App() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [paymentModalState, setPaymentModalState] = useState(null); // { participantId, date (scheduled) }
   const [lastPayment, setLastPayment] = useState(null);
+  const [payoutReceiptParticipant, setPayoutReceiptParticipant] = useState(null);
   const [detailsParticipantId, setDetailsParticipantId] = useState(null);
+  const [payoutModalState, setPayoutModalState] = useState(null); // { participantId }
+  const [showReport, setShowReport] = useState(false);
 
   // Fetch Bolsos on Mount
   useEffect(() => {
@@ -35,7 +43,10 @@ function App() {
       const normalized = data.map(b => ({
         ...b,
         participants: b.Participants || b.participants || [],
-        payments: b.Payments || b.payments || []
+        payments: (b.Payments || b.payments || []).map(p => ({
+          ...p,
+          date: p.scheduledDate // Ensure date property exists for frontend logic
+        }))
       }));
       setBolsos(normalized);
     } catch (error) {
@@ -59,7 +70,10 @@ function App() {
       const normalized = {
         ...newBolso,
         participants: newBolso.Participants || newBolso.participants || [],
-        payments: newBolso.Payments || newBolso.payments || []
+        payments: (newBolso.Payments || newBolso.payments || []).map(p => ({
+          ...p,
+          date: p.scheduledDate
+        }))
       };
 
       setBolsos([...bolsos, normalized]);
@@ -113,6 +127,20 @@ function App() {
   };
 
   const handleRequestPayment = (participantId, date) => {
+    // Check if already paid logic using normalized date
+    if (activeBolso) {
+      const existingPayment = activeBolso.payments.find(p =>
+        p.participantId === participantId && p.date === date
+      );
+
+      if (existingPayment) {
+        const participant = activeBolso.participants.find(p => p.id === participantId);
+        setLastPayment({ ...existingPayment, participant });
+        setDetailsParticipantId(null);
+        return;
+      }
+    }
+
     setPaymentModalState({ participantId, date });
     setDetailsParticipantId(null);
   };
@@ -151,10 +179,12 @@ function App() {
         const existingIdx = currentPayments.findIndex(p => p.id === result.id); // result is the Payment record
 
         let newPayments = [...currentPayments];
+        const normalizedResult = { ...result, date: scheduledDate };
+
         if (existingIdx >= 0) {
-          newPayments[existingIdx] = result;
+          newPayments[existingIdx] = normalizedResult;
         } else {
-          newPayments.push(result);
+          newPayments.push(normalizedResult);
         }
 
         return { ...b, payments: newPayments };
@@ -165,21 +195,14 @@ function App() {
 
       const participant = activeBolso.participants.find(p => String(p.id) === String(participantId));
       if (participant) {
-        setLastPayment({
-          ...result,
-          amount: parseFloat(result.amountPaid), // UI uses 'amount' property sometimes for generic receipt? Check ReceiptCard
-          // ReceiptCard uses: payment.amount (which in code was 'totalAmount'? No, in original confirmPayment:
-          // finalPaymentRecord.amount = totalAmount (Debt)
-          // finalPaymentRecord.amountPaid = paid
-          // We need to align with PaymentModel which has amountPaid.
-          // Let's check ReceiptCard usage.
-
-          // Original:
-          // amount: totalAmount (Quota size)
-          // amountPaid: ...
-
-          participant
-        });
+        if (participant) {
+          setLastPayment({
+            ...result,
+            amount: parseFloat(result.amountPaid),
+            date: scheduledDate, // Explicitly pass the scheduled date
+            participant
+          });
+        }
       }
 
     } catch (error) {
@@ -222,6 +245,57 @@ function App() {
     alert("Editar referencia no implementado en API.");
   }
 
+  const handleRegisterPayout = async (participantId) => {
+    if (!activeBolso) return;
+
+    // Open Modal instead of direct confirm
+    setPayoutModalState({ participantId });
+    // setDetailsParticipantId(null); // Keep details open? No, close to focus on payout
+    // actually, let's keep details open underneath or close it? 
+    // Usually modals stack or swap. Let's swap.
+    setDetailsParticipantId(null);
+  };
+
+  const confirmPayout = async (payoutData) => {
+    if (!activeBolso || !payoutModalState) return;
+
+    const { participantId } = payoutModalState;
+
+    try {
+      const updatedParticipant = await bolsoService.updateParticipant(participantId, payoutData);
+
+      // Update Local State
+      const updatedBolsos = bolsos.map(b => {
+        if (b.id !== activeBolso.id) return b;
+        return {
+          ...b,
+          participants: b.participants.map(p => p.id === participantId ? { ...p, ...updatedParticipant } : p)
+        };
+      });
+      setBolsos(updatedBolsos);
+
+      // Show Receipt
+      setPayoutReceiptParticipant(updatedParticipant);
+      setPayoutModalState(null);
+
+    } catch (e) {
+      console.error(e);
+      alert("Error al registrar la entrega.");
+    }
+  };
+
+  const handleSharePayout = () => {
+    if (!payoutReceiptParticipant || !activeBolso) return;
+    const text = `*ENTREGA DE BOLSO - ${activeBolso.name}*\n\n` +
+      `🎉 *Felicidades:* ${payoutReceiptParticipant.name}\n` +
+      `📅 *Fecha:* ${formatDate(payoutReceiptParticipant.payoutDate)}\n` +
+      `🎉 *Felicidades:* ${payoutReceiptParticipant.name}\n` +
+      `📅 *Fecha:* ${formatDate(payoutReceiptParticipant.payoutDate)}\n` +
+      `💰 *Monto Entregado:* $${payoutReceiptParticipant.payoutAmount}` +
+      (payoutReceiptParticipant.payoutCurrency === 'BS' ? ` (Bs. ${payoutReceiptParticipant.payoutAmountBs})` : '');
+    openWhatsApp(text);
+  };
+
   const handleDeletePayment = async (payment) => {
     if (!window.confirm("¿Eliminar pago?")) return;
     try {
@@ -250,8 +324,19 @@ function App() {
 
   const handleShareReceipt = () => {
     if (!lastPayment || !activeBolso) return;
-    // Receipt logic... simplified for now
-    let text = `*COMPROBANTE DE PAGO - ${activeBolso.name}*\n\nParticipante: ${lastPayment.participant.name}\nMonto Pagado: $${lastPayment.amountPaid}`;
+
+    // Build details string
+    let amountDetails = `$${lastPayment.amountPaid}`;
+    if (lastPayment.currency === 'BS' && lastPayment.amountBs) {
+      amountDetails += ` (Bs.${lastPayment.amountBs} @ ${lastPayment.exchangeRate})`;
+    }
+
+    let text = `*COMPROBANTE DE PAGO - ${activeBolso.name}*\n\n` +
+      `👤 *Participante:* ${lastPayment.participant.name}\n` +
+      `📅 *Fecha:* ${formatDate(lastPayment.date)}\n` +
+      `💰 *Monto:* ${amountDetails}\n` +
+      (lastPayment.reference ? `#️⃣ *Ref:* ${lastPayment.reference}` : '');
+
     openWhatsApp(text);
   };
 
@@ -281,18 +366,27 @@ function App() {
     );
   }
 
-  // Derived calcs
   const globalTotalExpected = activeBolso.participants.length * activeBolso.schedule.length * parseFloat(activeBolso.amount);
   const globalTotalCollected = activeBolso.payments.reduce((acc, curr) => acc + parseFloat(curr.amountPaid), 0);
+  const globalTotalPaidOut = activeBolso.participants.reduce((acc, curr) => acc + (parseFloat(curr.payoutAmount) || 0), 0);
+
+  // Standard Payout (Pot Size)
+  const standardPayout = parseFloat(activeBolso.amount) * activeBolso.participants.length;
 
   return (
     <div className="app-container">
-      <div style={{ marginBottom: '10px' }}>
+      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
         <button
           onClick={() => setActiveBolsoId(null)}
           style={{ color: 'var(--ios-blue)', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}
         >
           ← Volver
+        </button>
+        <button
+          onClick={() => setShowReport(true)}
+          style={{ color: 'var(--ios-blue)', fontSize: '0.9rem', fontWeight: 600, border: 'none', background: 'none' }}
+        >
+          Imprimir Reporte
         </button>
       </div>
 
@@ -303,13 +397,19 @@ function App() {
       </h2>
 
       <div style={{ fontSize: '0.9rem', color: 'var(--ios-text-secondary)', marginBottom: '16px' }}>
-        Inicio: {new Date(activeBolso.startDate).toLocaleDateString('es-VE')} • {activeBolso.participants.length} Personas • ${activeBolso.amount}/cuota
+        Inicio: {formatDate(activeBolso.startDate)} • {activeBolso.participants.length} Personas • ${activeBolso.amount}/cuota
       </div>
 
       <SummaryCard
         totalCollected={globalTotalCollected}
         totalExpected={globalTotalExpected}
         label="Progreso Total"
+      />
+
+      <LiquidityIndicator
+        totalCollected={globalTotalCollected}
+        totalPaidOut={globalTotalPaidOut}
+        payoutAmount={standardPayout}
       />
 
       <ParticipantList
@@ -335,6 +435,30 @@ function App() {
             setLastPayment({ ...payment, participant });
             setDetailsParticipantId(null);
           }}
+          onRegisterPayout={() => handleRegisterPayout(detailsParticipantId)}
+          onViewPayoutReceipt={() => {
+            const p = activeBolso.participants.find(x => x.id === detailsParticipantId);
+            setPayoutReceiptParticipant(p);
+            setDetailsParticipantId(null);
+          }}
+        />
+      )}
+
+      {payoutReceiptParticipant && (
+        <PayoutReceiptCard
+          participant={payoutReceiptParticipant}
+          bolso={activeBolso}
+          onClose={() => setPayoutReceiptParticipant(null)}
+          onShare={handleSharePayout}
+        />
+      )}
+
+      {payoutModalState && (
+        <PayoutModal
+          participant={activeBolso.participants.find(p => p.id === payoutModalState.participantId)}
+          totalCollected={globalTotalCollected} // Pass collected to help defaults? Or just pass calculated standard
+          onClose={() => setPayoutModalState(null)}
+          onConfirm={confirmPayout}
         />
       )}
 
@@ -357,6 +481,12 @@ function App() {
           onShare={handleShareReceipt}
           onUpdateReference={handleUpdateReference}
           onDelete={handleDeletePayment}
+        />
+      )}
+      {showReport && (
+        <BolsoReport
+          bolso={activeBolso}
+          onClose={() => setShowReport(false)}
         />
       )}
     </div>

@@ -5,7 +5,7 @@ const { Participant, Bolso } = require('../models');
 // PUT /api/participants/:id
 router.put('/:id', async (req, res) => {
     try {
-        const { name, turn } = req.body;
+        const { name, turn, payoutDate, payoutAmount, payoutReference, payoutCurrency, payoutExchangeRate, payoutAmountBs } = req.body;
         const participant = await Participant.findByPk(req.params.id);
 
         if (!participant) return res.status(404).json({ error: 'Participant not found' });
@@ -25,6 +25,12 @@ router.put('/:id', async (req, res) => {
 
         if (name) participant.name = name;
         if (turn !== undefined) participant.turn = turn;
+        if (payoutDate !== undefined) participant.payoutDate = payoutDate;
+        if (payoutAmount !== undefined) participant.payoutAmount = payoutAmount;
+        if (payoutReference !== undefined) participant.payoutReference = payoutReference;
+        if (payoutCurrency !== undefined) participant.payoutCurrency = payoutCurrency;
+        if (payoutExchangeRate !== undefined) participant.payoutExchangeRate = payoutExchangeRate;
+        if (payoutAmountBs !== undefined) participant.payoutAmountBs = payoutAmountBs;
 
         await participant.save();
         res.json(participant);

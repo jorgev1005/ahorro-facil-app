@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Card from './Card';
-import { X } from 'lucide-react';
+import { X, Gift } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 
-const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, onClose, onConfirm }) => {
-
-    // Existing Payment State (if partial)
-    const existingPaid = payment ? (Number(payment.amountPaid) || 0) : 0;
-    const remaining = totalAmount - existingPaid;
-
-    const targetDate = payment ? payment.date : scheduledDate;
+const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
+    // Default to total collected or a safe fallback
+    const defaultAmount = totalCollected > 0 ? totalCollected : 300;
 
     // Form State
-    const [amountToPay, setAmountToPay] = useState(remaining);
-    const [paidDate, setPaidDate] = useState(new Date().toLocaleDateString('en-CA'));
+    const [amountToPay, setAmountToPay] = useState(defaultAmount);
+    const [payoutDate, setPayoutDate] = useState(new Date().toLocaleDateString('en-CA')); // YYYY-MM-DD
     const [reference, setReference] = useState('');
 
     // Multi-Currency State
@@ -36,92 +32,85 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
     const handleSubmit = (e) => {
         e.preventDefault();
         onConfirm({
-            // Identification
-            paymentId: payment ? payment.id : null,
-            date: paidDate, // Transaction Date
-
-            // Financials
-            paidAmount: parseFloat(amountToPay), // Amount in this transaction
-
-            // Meta
-            reference,
-            currency,
-            exchangeRate: currency === 'BS' ? parseFloat(exchangeRate) : null,
-            amountBs: currency === 'BS' ? parseFloat(amountBs) : null
+            payoutDate,
+            payoutAmount: parseFloat(amountToPay),
+            payoutReference: reference,
+            payoutCurrency: currency,
+            payoutExchangeRate: currency === 'BS' ? parseFloat(exchangeRate) : null,
+            payoutAmountBs: currency === 'BS' ? parseFloat(amountBs) : null
         });
     };
 
     return (
         <div style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 1100,
-            display: 'flex', alignItems: 'flex-end', justifyContent: 'center', // Align bottom for slide up
+            backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 1200,
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
             backdropFilter: 'blur(4px)'
         }} onClick={onClose}>
             <Card className="animate-slide-up" style={{
                 width: '100%', maxWidth: '500px', maxHeight: '90vh',
                 borderBottomLeftRadius: 0, borderBottomRightRadius: 0,
-                marginBottom: 0, // Reset card margin
+                marginBottom: 0,
                 display: 'flex', flexDirection: 'column',
-                overflowY: 'auto', // Enable scrolling
+                overflowY: 'auto',
                 boxShadow: '0 -10px 40px rgba(0,0,0,0.1)'
             }} onClick={(e) => e.stopPropagation()}>
 
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                    <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Registrar Pago</h2>
+                    <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Registrar Entrega</h2>
                     <button onClick={onClose} className="btn-icon" style={{ backgroundColor: 'var(--ios-bg)', boxShadow: 'none' }}>
                         <X size={20} color="var(--ios-text-secondary)" />
                     </button>
                 </div>
 
                 <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '15px', color: 'var(--ios-text-secondary)', fontWeight: 500 }}>{participant.name}</span>
+                    <div style={{
+                        width: '64px', height: '64px', borderRadius: '50%',
+                        background: '#e5f9e7', color: 'var(--color-green)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        margin: '0 auto 16px'
+                    }}>
+                        <Gift size={32} />
+                    </div>
 
-                    {/* Amount Display */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                        <div className="text-display" style={{ fontSize: '42px' }}>
-                            ${amountToPay}
-                        </div>
-                        {existingPaid > 0 && (
-                            <div style={{ fontSize: '13px', color: 'var(--color-orange)', backgroundColor: 'rgba(255,149,0,0.1)', padding: '4px 12px', borderRadius: '100px', fontWeight: 600 }}>
-                                Abonado: ${existingPaid} · Resta: ${remaining}
-                            </div>
-                        )}
-                        <div style={{ fontSize: '13px', color: 'var(--ios-text-secondary)', marginTop: '4px' }}>
-                            Fecha Corresp.: {formatDate(targetDate)}
-                        </div>
+                    <span style={{ fontSize: '15px', color: 'var(--ios-text-secondary)', fontWeight: 500 }}>
+                        Entrega para: {participant.name}
+                    </span>
+
+                    <div style={{ fontSize: '42px', fontWeight: 600, marginTop: '8px' }}>
+                        ${amountToPay}
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit}>
 
+                    {/* Date Input */}
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Fecha de Entrega</label>
+                        <input
+                            type="date"
+                            value={payoutDate}
+                            onChange={(e) => setPayoutDate(e.target.value)}
+                            required
+                        />
+                    </div>
+
                     {/* Amount Input */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Monto a Pagar ($)</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Monto a Entregar ($)</label>
                         <input
                             type="number"
                             value={amountToPay}
                             onChange={(e) => setAmountToPay(e.target.value)}
-                            max={remaining}
-                            min="1"
-                        />
-                    </div>
-
-                    {/* Date Input */}
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Fecha Real del Pago</label>
-                        <input
-                            type="date"
-                            value={paidDate}
-                            onChange={(e) => setPaidDate(e.target.value)}
                             required
                         />
                     </div>
 
                     {/* Currency Toggle */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Moneda</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Moneda de Entrega</label>
                         <div style={{ display: 'flex', backgroundColor: 'rgba(118, 118, 128, 0.12)', padding: '2px', borderRadius: '10px' }}>
                             <button
                                 type="button"
@@ -186,12 +175,12 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                             type="text"
                             value={reference}
                             onChange={(e) => setReference(e.target.value)}
-                            placeholder="Ej: Pago Móvil 1234"
+                            placeholder="Ej: Efectivo, Transferencia..."
                         />
                     </div>
 
                     <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-                        Confirmar Pago
+                        Confirmar Entrega
                     </button>
                 </form>
             </Card>
@@ -199,4 +188,4 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
     );
 };
 
-export default PaymentModal;
+export default PayoutModal;

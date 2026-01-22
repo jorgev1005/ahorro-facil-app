@@ -10,36 +10,35 @@ const Header = ({ onShare }) => {
 
     return (
         <header style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 100,
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'end',
-            marginBottom: '20px',
-            paddingTop: '20px'
+            alignItems: 'center',
+            padding: '16px 20px',
+            margin: '0 -20px 24px -20px', // Negative margin to stretch full width within container
+            backdropFilter: 'saturate(180%) blur(20px)',
+            backgroundColor: 'rgba(242, 242, 247, 0.8)', // Translucent background matching body
+            borderBottom: '1px solid rgba(0,0,0,0.05)'
         }}>
             <div>
-                <div style={{
-                    fontSize: '0.9rem',
-                    color: 'var(--ios-text-secondary)',
+                <div className="text-caption" style={{
                     textTransform: 'capitalize',
-                    marginBottom: '4px'
+                    marginBottom: '2px',
+                    fontWeight: 600
                 }}>
                     {today}
                 </div>
-                <h1 style={{ margin: 0, fontSize: '2.5rem' }}>Bolso</h1>
+                <h1 style={{ fontSize: '30px' }}>Mis Bolsos</h1>
             </div>
+
             <button
                 onClick={onShare}
-                style={{
-                    background: 'var(--ios-blue)',
-                    borderRadius: '50%',
-                    width: '40px',
-                    height: '40px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 'var(--shadow-md)'
-                }}>
-                <Share size={20} color="white" />
+                className="btn-icon"
+                aria-label="Compartir"
+            >
+                <Share size={20} className="text-primary" style={{ color: 'var(--color-blue)' }} />
             </button>
         </header>
     );

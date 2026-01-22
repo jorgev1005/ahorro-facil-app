@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Use environment variable or default to local/dev URL
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// Production URL
+const API_URL = import.meta.env.VITE_API_URL || 'https://bolso-api.grupoaludra.com/api';
 
 const api = axios.create({
     baseURL: API_URL,

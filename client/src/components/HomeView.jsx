@@ -63,7 +63,7 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                     {displayedBolsos.map(bolso => (
                         <Card
                             key={bolso.id}
-                            className="bolso-card"
+                            className="bolso-card active-scale"
                             style={{ position: 'relative' }} // For absolute positioning of actions if needed, or flex
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

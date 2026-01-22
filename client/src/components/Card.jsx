@@ -1,18 +1,14 @@
 import React from 'react';
 
-const Card = ({ children, className = '', onClick, style = {} }) => {
+const Card = ({ children, className = '', onClick, style = {}, glass = false }) => {
     return (
         <div
             onClick={onClick}
-            className={className}
+            className={`card-ios ${glass ? 'glass' : ''} ${className}`}
             style={{
-                backgroundColor: 'var(--ios-card-bg)',
-                borderRadius: 'var(--radius-l)',
-                boxShadow: 'var(--shadow-sm)',
-                padding: '16px',
-                marginBottom: '16px',
+                backgroundColor: glass ? 'var(--ios-card)' : 'white',
                 cursor: onClick ? 'pointer' : 'default',
-                ...style // Allow overriding/extending styles
+                ...style
             }}
         >
             {children}

@@ -1,13 +1,19 @@
 import React from 'react';
 import Card from './Card';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle, Gift } from 'lucide-react';
 
-const ParticipantRow = ({ participant, paidCount, totalCount, hasPaidToday, onTogglePayment }) => {
+const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, hasPaidToday, onTogglePayment }) => {
     const percentage = Math.round((paidCount / totalCount) * 100);
+    const hasReceivedPayout = !!participant.payoutDate;
+
+    // Debt Calculation
+    // If paidCount < expectedCount, they are overdue.
+    const overdueCount = Math.max(0, expectedCount - paidCount);
 
     return (
         <div
             onClick={() => onTogglePayment(participant.id)}
+            className="active-scale"
             style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -26,7 +32,30 @@ const ParticipantRow = ({ participant, paidCount, totalCount, hasPaidToday, onTo
                             #{participant.turn}
                         </span>
                     )}
+                    {/* Debug: Show placeholder if turn is missing but we want to see layout */}
+                    {!participant.turn && (
+                        <span style={{
+                            fontSize: '0.8rem', backgroundColor: 'var(--ios-separator)', color: 'white',
+                            padding: '1px 6px', borderRadius: '6px', fontWeight: 700, marginRight: '4px'
+                        }}>
+                            #?
+                        </span>
+                    )}
+
                     {participant.name}
+
+                    {hasReceivedPayout && (
+                        <Gift size={14} color="var(--color-green)" style={{ marginLeft: '4px' }} />
+                    )}
+
+                    {overdueCount > 0 && (
+                        <span style={{
+                            fontSize: '0.7rem', backgroundColor: 'var(--color-red)', color: 'white',
+                            padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto', marginRight: '8px'
+                        }}>
+                            Debe {overdueCount}
+                        </span>
+                    )}
                 </div>
 
                 {/* Progress Bar */}
@@ -35,10 +64,10 @@ const ParticipantRow = ({ participant, paidCount, totalCount, hasPaidToday, onTo
                         flex: 1, height: '6px', backgroundColor: '#F2F2F7', borderRadius: '3px', overflow: 'hidden'
                     }}>
                         <div style={{
-                            width: `${percentage}%`, height: '100%', backgroundColor: 'var(--ios-green)', borderRadius: '3px'
+                            width: `${percentage}%`, height: '100%', backgroundColor: overdueCount > 0 ? 'var(--color-orange)' : 'var(--ios-green)', borderRadius: '3px'
                         }} />
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--ios-text-secondary)', minWidth: '35px', textAlign: 'right' }}>
+                    <span style={{ fontSize: '0.75rem', color: overdueCount > 0 ? 'var(--color-red)' : 'var(--ios-text-secondary)', minWidth: '35px', textAlign: 'right', fontWeight: overdueCount > 0 ? 600 : 400 }}>
                         {paidCount}/{totalCount}
                     </span>
                 </div>
@@ -56,7 +85,7 @@ const ParticipantRow = ({ participant, paidCount, totalCount, hasPaidToday, onTo
                     <Circle color="var(--ios-separator)" size={24} />
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 
@@ -71,6 +100,9 @@ const ParticipantList = ({ participants, payments, bolsoSchedule, currentDate, o
 
     const totalCount = bolsoSchedule ? bolsoSchedule.length : 10;
 
+    // Calculate how many dates in schedule are <= today
+    const expectedCount = bolsoSchedule ? bolsoSchedule.filter(date => date <= currentDate).length : 0;
+
     return (
         <Card>
             <h3 style={{ marginBottom: '12px', color: 'var(--ios-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem' }}>
@@ -83,6 +115,7 @@ const ParticipantList = ({ participants, payments, bolsoSchedule, currentDate, o
                         participant={p}
                         paidCount={getPaidCount(p.id)}
                         totalCount={totalCount}
+                        expectedCount={expectedCount}
                         hasPaidToday={isPaidToday(p.id)}
                         onTogglePayment={onTogglePayment}
                     />

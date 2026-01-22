@@ -8,19 +8,22 @@ export const calculateSchedule = (startDate, frequency, duration, targetDay = nu
 
     // If a target day is specified (0-6), find the next occurrence
     // valid targetDay: 0 (Sun) - 6 (Sat)
+    // Check for null/undefined/empty string explicitly. Number 0 is valid.
     if (targetDay !== null && targetDay !== undefined && targetDay !== '') {
         const currentDay = current.getDay();
-        const target = parseInt(targetDay);
+        const target = parseInt(targetDay); // Ensure number
 
-        let diff = target - currentDay;
-        if (diff < 0) {
-            diff += 7;
+        if (!isNaN(target)) {
+            let diff = target - currentDay;
+            // Logic: we want the *next* occurrence (or today).
+            // If diff < 0 (target is backwards in week), add 7 to go to next week.
+            if (diff < 0) {
+                diff += 7;
+            }
+
+            // Apply shift
+            current.setDate(current.getDate() + diff);
         }
-        // If diff is 0, it means Today is the day. We keep it. 
-        // If user wants "Next Friday" when today is Friday, logic might need check.
-        // Usually, if today matches, we start today.
-
-        current.setDate(current.getDate() + diff);
     }
 
     for (let i = 0; i < duration; i++) {

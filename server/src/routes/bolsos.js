@@ -12,7 +12,22 @@ router.get('/', async (req, res) => {
                 { model: Payment }
             ]
         });
-        res.json(bolsos);
+
+        // Ensure participants are sorted by turn
+        const sortedBolsos = bolsos.map(b => {
+            const json = b.toJSON();
+            if (json.Participants) {
+                json.Participants.sort((a, b) => {
+                    if (a.turn && b.turn) return a.turn - b.turn;
+                    if (a.turn) return -1;
+                    if (b.turn) return 1;
+                    return 0;
+                });
+            }
+            return json;
+        });
+
+        res.json(sortedBolsos);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server Error' });
@@ -76,7 +91,9 @@ router.post('/', async (req, res) => {
             return dates;
         };
 
-        const schedule = calculateSchedule(startDate, frequency, duration);
+        const schedule = req.body.schedule && Array.isArray(req.body.schedule) && req.body.schedule.length > 0
+            ? req.body.schedule
+            : calculateSchedule(startDate, frequency, duration);
 
         const newBolso = await Bolso.create({
             name,

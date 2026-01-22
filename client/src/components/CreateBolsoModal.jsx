@@ -8,7 +8,7 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
         name: '',
         startDate: new Date().toLocaleDateString('en-CA'), // YYYY-MM-DD Local
         frequency: 'weekly',
-        paymentDay: '', // Default empty (use start date), or we can set a default
+        paymentDay: '',
         duration: 10,
         amount: 30,
         participantsCount: 10
@@ -18,8 +18,8 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'duration' || name === 'amount' || name === 'participantsCount'
-                ? parseInt(value) || 0
+            [name]: name === 'duration' || name === 'amount' || name === 'participantsCount' || name === 'paymentDay'
+                ? (value === '' ? '' : parseInt(value))
                 : value
         }));
     };
@@ -27,7 +27,6 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Pass paymentDay (if set) to logic
         const schedule = calculateSchedule(
             formData.startDate,
             formData.frequency,
@@ -57,50 +56,56 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
     return (
         <div style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
-            backdropFilter: 'blur(5px)'
-        }}>
-            <Card style={{ width: '100%', maxWidth: '400px', maxHeight: '90vh', overflowY: 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Nuevo Bolso</h2>
-                    <button onClick={onClose}><X size={24} color="var(--ios-text-secondary)" /></button>
+            backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 1000,
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            backdropFilter: 'blur(4px)'
+        }} onClick={onClose}>
+            <Card className="animate-slide-up" style={{
+                width: '100%', maxWidth: '500px', maxHeight: '90vh',
+                borderBottomLeftRadius: 0, borderBottomRightRadius: 0,
+                marginBottom: 0, overflowY: 'auto',
+                display: 'flex', flexDirection: 'column',
+                boxShadow: '0 -10px 40px rgba(0,0,0,0.1)'
+            }} onClick={(e) => e.stopPropagation()}>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                    <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Nuevo Bolso</h2>
+                    <button onClick={onClose} className="btn-icon" style={{ backgroundColor: 'var(--ios-bg)', boxShadow: 'none' }}>
+                        <X size={20} color="var(--ios-text-secondary)" />
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group" style={{ marginBottom: '16px' }}>
-                        <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Nombre</label>
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={labelStyle}>Nombre del Bolso</label>
                         <input
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            placeholder="Ej: Ahorro Familiar"
+                            placeholder="Ej: Ahorro Navideño 2026"
                             required
-                            style={inputStyle}
                         />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Inicio</label>
+                            <label style={labelStyle}>Inicio</label>
                             <input
                                 name="startDate"
                                 type="date"
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 required
-                                style={inputStyle}
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Día de Pago</label>
+                            <label style={labelStyle}>Día Preferido</label>
                             <select
                                 name="paymentDay"
                                 value={formData.paymentDay}
                                 onChange={handleChange}
-                                style={inputStyle}
                             >
-                                <option value="">Mismo día</option>
+                                <option value="">Automático</option>
                                 {daysOfWeek.map(d => (
                                     <option key={d.val} value={d.val}>{d.label}</option>
                                 ))}
@@ -108,13 +113,12 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '16px' }}>
-                        <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Frecuencia</label>
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={labelStyle}>Frecuencia</label>
                         <select
                             name="frequency"
                             value={formData.frequency}
                             onChange={handleChange}
-                            style={inputStyle}
                         >
                             <option value="weekly">Semanal</option>
                             <option value="biweekly">Quincenal</option>
@@ -122,9 +126,9 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
                         </select>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Duración (Pagos)</label>
+                            <label style={labelStyle}>Duración (Pagos)</label>
                             <input
                                 name="duration"
                                 type="number"
@@ -132,11 +136,10 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
                                 max="52"
                                 value={formData.duration}
                                 onChange={handleChange}
-                                style={inputStyle}
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Participantes</label>
+                            <label style={labelStyle}>Participantes</label>
                             <input
                                 name="participantsCount"
                                 type="number"
@@ -144,27 +147,23 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
                                 max="50"
                                 value={formData.participantsCount}
                                 onChange={handleChange}
-                                style={inputStyle}
                             />
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '24px' }}>
-                        <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>Monto por Pago ($)</label>
+                    <div style={{ marginBottom: '32px' }}>
+                        <label style={labelStyle}>Monto por Pago ($)</label>
                         <input
                             name="amount"
                             type="number"
                             min="1"
                             value={formData.amount}
                             onChange={handleChange}
-                            style={inputStyle}
+                            style={{ fontSize: '18px', fontWeight: 600 }}
                         />
                     </div>
 
-                    <button type="submit" style={{
-                        width: '100%', padding: '16px', backgroundColor: 'var(--ios-blue)', color: 'white',
-                        borderRadius: '12px', fontWeight: 600, fontSize: '1rem', border: 'none'
-                    }}>
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
                         Crear Bolso
                     </button>
                 </form>
@@ -173,15 +172,8 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
     );
 };
 
-const inputStyle = {
-    width: '100%',
-    padding: '12px',
-    borderRadius: '8px',
-    border: '1px solid var(--ios-separator)',
-    fontSize: '1rem',
-    fontFamily: 'inherit',
-    backgroundColor: 'var(--ios-bg)',
-    color: 'var(--ios-text-primary)'
+const labelStyle = {
+    display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase'
 };
 
 export default CreateBolsoModal;
