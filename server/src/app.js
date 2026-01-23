@@ -3,7 +3,12 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
-app.use(cors());
+// Middleware (CORS configured for production)
+app.use(cors({
+    origin: ['https://ahorro.grupoaludra.com', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Basic Route for testing

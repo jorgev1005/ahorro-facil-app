@@ -51,7 +51,7 @@ function App() {
       setBolsos(normalized);
     } catch (error) {
       console.error("Failed to fetch bolsos:", error);
-      alert("Error al cargar los datos del servidor.");
+      alert("Error: " + (error.message || "Error al cargar los datos"));
     } finally {
       setIsLoading(false);
     }
