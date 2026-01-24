@@ -32,7 +32,15 @@ router.put('/:id', async (req, res) => {
         if (payoutExchangeRate !== undefined) participant.payoutExchangeRate = payoutExchangeRate;
         if (payoutAmountBs !== undefined) participant.payoutAmountBs = payoutAmountBs;
 
+        if (payoutAmountBs !== undefined) participant.payoutAmountBs = payoutAmountBs;
+
+        console.log('Update Participant Payload:', req.body); // DEBUG
         await participant.save();
+
+        // Reload to ensure we return the committed DB state (including new columns)
+        await participant.reload();
+
+        console.log('Updated Participant Result:', participant.toJSON()); // DEBUG
         res.json(participant);
     } catch (error) {
         console.error(error);
