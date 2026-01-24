@@ -5,8 +5,9 @@ const app = express();
 // Middleware
 // Middleware (CORS configured for production)
 app.use(cors({
-    origin: ['https://ahorro.grupoaludra.com', 'http://localhost:5173'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: true, // Allow any origin temporarily to rule out mismatch
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
