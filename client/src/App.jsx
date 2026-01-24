@@ -11,6 +11,7 @@ import PayoutReceiptCard from './components/PayoutReceiptCard'
 import PayoutModal from './components/PayoutModal'
 import LiquidityIndicator from './components/LiquidityIndicator'
 import BolsoReport from './components/BolsoReport'
+import ParticipantReport from './components/ParticipantReport'
 import { generateWhatsAppMessage, openWhatsApp } from './utils/whatsapp'
 import { bolsoService } from './services/api'
 import { formatDate } from './utils/formatters'
@@ -29,6 +30,7 @@ function App() {
   const [detailsParticipantId, setDetailsParticipantId] = useState(null);
   const [payoutModalState, setPayoutModalState] = useState(null); // { participantId }
   const [showReport, setShowReport] = useState(false);
+  const [showParticipantReportId, setShowParticipantReportId] = useState(null);
 
   // Fetch Bolsos on Mount
   useEffect(() => {
@@ -431,7 +433,14 @@ function App() {
         <ParticipantDetailsModal
           participant={activeBolso.participants.find(p => p.id === detailsParticipantId)}
           bolso={activeBolso}
-          onClose={() => setDetailsParticipantId(null)}
+          onClose={(action) => {
+            if (action === 'print') {
+              setShowParticipantReportId(detailsParticipantId);
+              setDetailsParticipantId(null);
+            } else {
+              setDetailsParticipantId(null);
+            }
+          }}
           onUpdateName={handleUpdateName}
           onUpdateTurn={handleUpdateTurn}
           onPayDate={(date) => handleRequestPayment(detailsParticipantId, date)}
@@ -492,6 +501,13 @@ function App() {
         <BolsoReport
           bolso={activeBolso}
           onClose={() => setShowReport(false)}
+        />
+      )}
+      {showParticipantReportId && (
+        <ParticipantReport
+          participant={activeBolso.participants.find(p => p.id === showParticipantReportId)}
+          bolso={activeBolso}
+          onClose={() => setShowParticipantReportId(null)}
         />
       )}
     </div>
