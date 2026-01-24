@@ -211,77 +211,48 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                                 <button onClick={() => onClose()} className="btn-icon" style={{ backgroundColor: 'var(--ios-bg)' }}><X size={20} color="var(--text-secondary)" /></button>
                             </div>
                         </div>
-
-                        {/* Stats Grid */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                            <div style={{ backgroundColor: 'var(--ios-bg)', padding: '12px', borderRadius: '12px' }}>
-                                <span style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: 600 }}>Pagado</span>
-                                <span style={{ display: 'block', fontSize: '18px', fontWeight: 600, color: 'var(--color-green)' }}>{formatCurrency(totalPaid)}</span>
+                        className="active-scale"
+                        style={{
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            padding: '16px 24px',
+                            backgroundColor: 'white',
+                            borderBottom: '1px solid rgba(0,0,0,0.05)',
+                            cursor: 'pointer'
+                        }}
+                                >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{
+                                width: '32px', height: '32px', borderRadius: '50%',
+                                backgroundColor: 'var(--ios-bg)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)'
+                            }}>
+                                {item.index + 1}
                             </div>
-                            <div style={{ backgroundColor: 'var(--ios-bg)', padding: '12px', borderRadius: '12px' }}>
-                                <span style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: 600 }}>Deuda</span>
-                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                                    <span style={{ fontSize: '18px', fontWeight: 600, color: currentDebt > 0 ? 'var(--color-orange)' : 'var(--text-primary)' }}>{formatCurrency(currentDebt)}</span>
-                                    {overdueCount > 0 && <span style={{ fontSize: '11px', color: 'var(--color-orange)', fontWeight: 600 }}>({overdueCount})</span>}
+                            <div>
+                                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px' }}>
+                                    {formatDate(item.date)}
                                 </div>
-                            </div>
-                            <div style={{ backgroundColor: 'var(--ios-bg)', padding: '12px', borderRadius: '12px' }}>
-                                <span style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: 600 }}>Faltan</span>
-                                <span style={{ display: 'block', fontSize: '18px', fontWeight: 600, color: 'var(--color-blue)' }}>{remainingCount}</span>
+                                <div style={{ fontSize: '13px', color: status.subtextColor, marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    {status.mainText === 'Pagado' ? (
+                                        <> {status.subtext} </>
+                                    ) : (status.mainText)}
+                                    {item.status === 'partial' && (
+                                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}> ({status.subtext})</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontWeight: 500, fontSize: '15px', color: 'var(--text-primary)' }}>
+                                {item.status === 'partial' ? formatCurrency(item.amountPaid) : formatCurrency(item.amount)}
+                            </span>
+                            {status.icon}
+                        </div>
                     </div>
-
-                    {/* List - iOS Style List */}
-                    <div style={{ overflowY: 'auto', flex: 1 }}>
-                        {history.map((item, i) => {
-                            const status = getStatusInfo(item);
-                            return (
-                                <div
-                                    key={item.date}
-                                    onClick={() => item.status === 'paid' ? onViewReceipt(item) : onPayDate(item.date)}
-                                    className="active-scale"
-                                    style={{
-                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                        padding: '16px 24px',
-                                        backgroundColor: 'white',
-                                        borderBottom: '1px solid rgba(0,0,0,0.05)',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                        <div style={{
-                                            width: '32px', height: '32px', borderRadius: '50%',
-                                            backgroundColor: 'var(--ios-bg)',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)'
-                                        }}>
-                                            {item.index + 1}
-                                        </div>
-                                        <div>
-                                            <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px' }}>
-                                                {formatDate(item.date)}
-                                            </div>
-                                            <div style={{ fontSize: '13px', color: status.subtextColor, marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                {status.mainText === 'Pagado' ? (
-                                                    <> {status.subtext} </>
-                                                ) : (status.mainText)}
-                                                {item.status === 'partial' && (
-                                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}> ({status.subtext})</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <span style={{ fontWeight: 500, fontSize: '15px', color: 'var(--text-primary)' }}>
-                                            {item.status === 'partial' ? formatCurrency(item.amountPaid) : formatCurrency(item.amount)}
-                                        </span>
-                                        {status.icon}
-                                    </div>
-                                </div>
-                            );
+                    );
                         })}
-                    </div>
+                </div>
             </Card>
         </div>
     );
