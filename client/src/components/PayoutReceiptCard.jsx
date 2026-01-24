@@ -69,9 +69,8 @@ const PayoutReceiptCard = ({ participant, bolso, onClose, onShare }) => {
                                 Monto Entregado
                             </span>
                             <span style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-green)', letterSpacing: '-0.5px' }}>
-                                <span style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-green)', letterSpacing: '-0.5px' }}>
-                                    {formatCurrency(Number(participant.payoutAmount) || 0)}
-                                </span>
+                                {formatCurrency(Number(participant.payoutAmount) || 0)}
+                            </span>
                         </div>
 
                         {participant.payoutReference && (
