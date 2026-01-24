@@ -87,27 +87,36 @@ function App() {
   };
 
   const handleResetApp = async () => {
-    if (window.confirm('⚠️ ¿Estás seguro de borrar este bolso? (Solo local en esta demo, en prod borraría todo)')) {
-      // Not implemented global delete in API for safety yet
-      alert("Función deshabilitada en modo servidor por seguridad.");
+    if (window.confirm('⚠️ ¿Estás seguro de BORRAR TODO? Esta acción no se puede deshacer.')) {
+      try {
+        await bolsoService.resetApp();
+        alert("Aplicación reiniciada. Se recargará la página.");
+        window.location.reload();
+      } catch (e) {
+        console.error(e);
+        alert("Error al reiniciar la app.");
+      }
     }
   };
 
   const handleArchiveBolso = async (id) => {
     if (window.confirm('¿Quieres mover este bolso a la papelera?')) {
-      // API TODO: Add archive endpoint or general update
-      // For now, implementing client side Optimistic UI + nothing on backend? 
-      // Need to add update endpoint or soft delete.
-      // Re-map to local update for now, ideally backend has 'archived' field update.
-      // Note: Implementation plan didn't explicitly add archive route, but model has field.
-      // Using generic update if available or skip. 
-      // Let's assume we skip persistence of archive for this specific step or do nothing.
-      alert("Archivar no implementado en backend aún.");
+      try {
+        await bolsoService.update(id, { archived: true });
+        // Remove from view if we don't have a "Trash" view. 
+        // For now, reload or filter out locally.
+        setBolsos(bolsos.filter(b => b.id !== id));
+        if (activeBolsoId === id) setActiveBolsoId(null);
+      } catch (e) {
+        console.error(e);
+        alert("Error al archivar.");
+      }
     }
   };
 
   const handleRestoreBolso = (id) => {
-    alert("Restaurar no implementado en backend aún.");
+    // Implement if UI has Trash View
+    alert("Restaurar no implementado (falta vista de papelera).");
   };
 
   const handleDeleteBolso = async (id) => {
@@ -289,8 +298,6 @@ function App() {
   const handleSharePayout = () => {
     if (!payoutReceiptParticipant || !activeBolso) return;
     const text = `*ENTREGA DE BOLSO - ${activeBolso.name}*\n\n` +
-      `🎉 *Felicidades:* ${payoutReceiptParticipant.name}\n` +
-      `📅 *Fecha:* ${formatDate(payoutReceiptParticipant.payoutDate)}\n` +
       `🎉 *Felicidades:* ${payoutReceiptParticipant.name}\n` +
       `📅 *Fecha:* ${formatDate(payoutReceiptParticipant.payoutDate)}\n` +
       `💰 *Monto Entregado:* $${payoutReceiptParticipant.payoutAmount}` +

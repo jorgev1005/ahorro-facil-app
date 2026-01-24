@@ -31,6 +31,16 @@ export const bolsoService = {
         return response.data;
     },
 
+    update: async (id, data) => {
+        const response = await api.put(`/bolsos/${id}`, data);
+        return response.data;
+    },
+
+    resetApp: async () => {
+        const response = await api.delete('/bolsos/admin/reset_demo_data');
+        return response.data;
+    },
+
     // Participants
     updateParticipant: async (id, data) => {
         const response = await api.put(`/participants/${id}`, data);

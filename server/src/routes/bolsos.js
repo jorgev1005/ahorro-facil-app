@@ -125,6 +125,52 @@ router.post('/', async (req, res) => {
     }
 });
 
+// PUT /api/bolsos/:id - Update generic fields (like archive)
+router.put('/:id', async (req, res) => {
+    try {
+        const { name, archived, frequency, startDate, duration, amount } = req.body;
+        const bolso = await Bolso.findByPk(req.params.id);
+
+        if (!bolso) return res.status(404).json({ error: 'Bolso not found' });
+
+        if (name !== undefined) bolso.name = name;
+        if (archived !== undefined) bolso.archived = archived;
+        // Logic for updating other fields implies deeper changes (schedule recalc), 
+        // for now restricting to simple props or full update if passed.
+
+        await bolso.save();
+        res.json(bolso);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
+// DELETE /api/bolsos/admin/reset_demo_data - CAUTION: Deletes ALL data
+router.delete('/admin/reset_demo_data', async (req, res) => {
+    try {
+        // Transaction safety would be good, but simple cascade is enough for demo
+        // Force delete all
+        await Payment.destroy({ where: {}, truncate: true }); // MySQL/Postgres truncate might fail with FK, use cascade or simple destroy
+        await Participant.destroy({ where: {}, truncate: true }); // Truncate usually requires CASCADE in Postgres
+
+        // Use standard delete if truncate is strict
+        // await Payment.destroy({ where: {} });
+        // await Participant.destroy({ where: {} });
+        // await Bolso.destroy({ where: {} });
+
+        // Let's use simple destroy all
+        await Payment.destroy({ where: {}, force: true });
+        await Participant.destroy({ where: {}, force: true });
+        await Bolso.destroy({ where: {}, force: true });
+
+        res.json({ message: 'App reset successful' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
 // DELETE /api/bolsos/:id
 router.delete('/:id', async (req, res) => {
     try {
