@@ -413,7 +413,12 @@ function App() {
       />
 
       <ParticipantList
-        participants={activeBolso.participants}
+        participants={[...activeBolso.participants].sort((a, b) => {
+          if (a.turn && b.turn) return a.turn - b.turn;
+          if (a.turn) return -1;
+          if (b.turn) return 1;
+          return 0;
+        })}
         payments={activeBolso.payments}
         bolsoSchedule={activeBolso.schedule}
         currentDate={today}

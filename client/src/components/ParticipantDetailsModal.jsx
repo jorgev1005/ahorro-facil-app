@@ -124,12 +124,13 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
             backdropFilter: 'blur(4px)'
         }} onClick={onClose}>
             <Card className="animate-slide-up" style={{
-                width: '100%', maxWidth: '500px', maxHeight: '90vh',
+                width: '100%', maxWidth: '500px', maxHeight: '85vh', // Reduced slightly to avoid address bar overlap
                 borderBottomLeftRadius: 0, borderBottomRightRadius: 0,
                 marginBottom: 0, padding: 0,
                 display: 'flex', flexDirection: 'column',
+                overflow: 'hidden', // Key for flex scrolling
                 boxShadow: '0 -10px 40px rgba(0,0,0,0.1)',
-                backgroundColor: 'var(--ios-bg)' // Modal background greyish like iOS Lists
+                backgroundColor: 'var(--ios-bg)'
             }} onClick={(e) => e.stopPropagation()}>
 
                 {/* Header */}
