@@ -8,8 +8,8 @@ async function startServer() {
         await sequelize.authenticate();
         console.log('✅ Database connected successfully.');
 
-        // Sync Models (force: false ensures we don't drop tables in prod)
-        await sequelize.sync({ force: false });
+        // Sync Models (alter: true checks current schema and updates it - safe for prod usually, backups recommended)
+        await sequelize.sync({ alter: true });
         console.log('✅ Database synced.');
 
         app.listen(PORT, () => {
