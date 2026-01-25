@@ -280,7 +280,7 @@ function App() {
         if (b.id !== activeBolso.id) return b;
         return {
           ...b,
-          participants: b.participants.map(p => p.id === participantId ? { ...p, ...updatedParticipant } : p)
+          participants: b.participants.map(p => p.id === participantId ? { ...p, ...updatedParticipant, ...payoutData } : p)
         };
       });
       setBolsos(updatedBolsos);
