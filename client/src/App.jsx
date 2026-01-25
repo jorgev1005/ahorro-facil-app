@@ -285,8 +285,16 @@ function App() {
       });
       setBolsos(updatedBolsos);
 
-      // Show Receipt
-      setPayoutReceiptParticipant(updatedParticipant);
+      // Show Receipt with Optimistic Data (merge local input to guarantee immediate feedback)
+      // This fixes the issue where backend response might be partial or slow
+      const receiptData = {
+        ...updatedParticipant,
+        payoutAmount: payoutData.payoutAmount,
+        payoutDate: payoutData.payoutDate,
+        payoutReference: payoutData.payoutReference
+      };
+
+      setPayoutReceiptParticipant(receiptData);
       setPayoutModalState(null);
 
     } catch (e) {
