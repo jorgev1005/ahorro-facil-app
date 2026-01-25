@@ -150,19 +150,16 @@ router.put('/:id', async (req, res) => {
 router.delete('/admin/reset_demo_data', async (req, res) => {
     try {
         // Transaction safety would be good, but simple cascade is enough for demo
-        // Force delete all
-        await Payment.destroy({ where: {}, truncate: true }); // MySQL/Postgres truncate might fail with FK, use cascade or simple destroy
-        await Participant.destroy({ where: {}, truncate: true }); // Truncate usually requires CASCADE in Postgres
+        // Force delete all in correct order to respect Foreign Key constraints
 
-        // Use standard delete if truncate is strict
-        // await Payment.destroy({ where: {} });
-        // await Participant.destroy({ where: {} });
-        // await Bolso.destroy({ where: {} });
+        // 1. Delete all Payments (referencing Participants and Bolsos)
+        await Payment.destroy({ where: {} });
 
-        // Let's use simple destroy all
-        await Payment.destroy({ where: {}, force: true });
-        await Participant.destroy({ where: {}, force: true });
-        await Bolso.destroy({ where: {}, force: true });
+        // 2. Delete all Participants (referencing Bolsos)
+        await Participant.destroy({ where: {} });
+
+        // 3. Delete all Bolsos
+        await Bolso.destroy({ where: {} });
 
         res.json({ message: 'App reset successful' });
     } catch (error) {
