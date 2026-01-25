@@ -138,11 +138,14 @@ router.put('/:id', async (req, res) => {
         // Logic for updating other fields implies deeper changes (schedule recalc), 
         // for now restricting to simple props or full update if passed.
 
+        console.log(`[PUT Bolso] Updating ${req.params.id} with`, req.body); // DEBUG
         await bolso.save();
+
+        await bolso.reload(); // Ensure persistence
         res.json(bolso);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server Error' });
+        console.error('[PUT Bolso] Error:', error); // DEBUG
+        res.status(500).json({ error: error.message || 'Server Error' });
     }
 });
 
