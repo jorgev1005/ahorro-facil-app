@@ -151,6 +151,7 @@ router.put('/:id', async (req, res) => {
 
 // DELETE /api/bolsos/admin/reset_demo_data - CAUTION: Deletes ALL data
 router.delete('/admin/reset_demo_data', async (req, res) => {
+    console.log('RESET DEMO DATA REQUESTED'); // FORCE UPDATE
     try {
         // Transaction safety would be good, but simple cascade is enough for demo
         // Force delete all in correct order to respect Foreign Key constraints
