@@ -105,7 +105,7 @@ function App() {
         await bolsoService.update(id, { archived: true });
         // Remove from view if we don't have a "Trash" view. 
         // For now, reload or filter out locally.
-        setBolsos(bolsos.filter(b => b.id !== id));
+        setBolsos(bolsos.map(b => b.id === id ? { ...b, archived: true } : b));
         if (activeBolsoId === id) setActiveBolsoId(null);
       } catch (e) {
         console.error(e);
@@ -114,9 +114,14 @@ function App() {
     }
   };
 
-  const handleRestoreBolso = (id) => {
-    // Implement if UI has Trash View
-    alert("Restaurar no implementado (falta vista de papelera).");
+  const handleRestoreBolso = async (id) => {
+    try {
+      await bolsoService.update(id, { archived: false });
+      setBolsos(bolsos.map(b => b.id === id ? { ...b, archived: false } : b));
+    } catch (e) {
+      console.error(e);
+      alert("Error al restaurar.");
+    }
   };
 
   const handleDeleteBolso = async (id) => {
