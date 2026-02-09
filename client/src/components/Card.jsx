@@ -1,13 +1,18 @@
 import React from 'react';
 
-const Card = ({ children, className = '', onClick, style = {}, glass = false }) => {
+const Card = ({ children, className = '', onClick, style = {}, glass = false, activeScale = false }) => {
+    // Determine classes
+    const baseClass = glass ? 'glass-card' : 'card-ios';
+    const interactiveClass = (onClick || activeScale) ? 'interactive-card' : '';
+
     return (
         <div
             onClick={onClick}
-            className={`card-ios ${glass ? 'glass' : ''} ${className}`}
+            className={`${baseClass} ${interactiveClass} ${className}`}
             style={{
-                backgroundColor: glass ? 'var(--ios-card)' : 'white',
-                cursor: onClick ? 'pointer' : 'default',
+                // Remove inline background if glass is true to let CSS handle the blur/transparency
+                backgroundColor: glass ? undefined : 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: glass ? undefined : 'blur(12px)',
                 ...style
             }}
         >

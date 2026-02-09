@@ -9,28 +9,30 @@ const Header = ({ onShare }) => {
     });
 
     return (
-        <header style={{
+        <header className="glass" style={{
             position: 'sticky',
-            top: 0,
+            top: 20,
             zIndex: 100,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '16px 20px',
-            margin: '0 -20px 24px -20px', // Negative margin to stretch full width within container
-            backdropFilter: 'saturate(180%) blur(20px)',
-            backgroundColor: 'rgba(242, 242, 247, 0.8)', // Translucent background matching body
-            borderBottom: '1px solid rgba(0,0,0,0.05)'
+            padding: '16px 24px',
+            marginBottom: '24px',
+            borderRadius: 'var(--radius-l)',
+            border: 'var(--glass-border)',
         }}>
             <div>
                 <div className="text-caption" style={{
                     textTransform: 'capitalize',
-                    marginBottom: '2px',
-                    fontWeight: 600
+                    marginBottom: '4px',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    letterSpacing: '0.05em'
                 }}>
                     {today}
                 </div>
-                <h1 style={{ fontSize: '30px' }}>Mis Bolsos</h1>
+                {/* Removed redundant h1 "Mis Bolsos" if HomeView has it, or keep it if it's the main app header */}
+                <h1 style={{ fontSize: '22px', margin: 0 }}>Ahorro Fácil</h1>
             </div>
 
             <button
@@ -38,7 +40,7 @@ const Header = ({ onShare }) => {
                 className="btn-icon"
                 aria-label="Compartir"
             >
-                <Share size={20} className="text-primary" style={{ color: 'var(--color-blue)' }} />
+                <Share size={20} style={{ color: 'var(--ios-blue)' }} />
             </button>
         </header>
     );
