@@ -1,6 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const { Participant, Bolso } = require('../models');
+const { protect } = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
+
+// GET /api/participants/:id/share_token
+router.get('/:id/share_token', protect, async (req, res) => {
+    try {
+        const participant = await Participant.findOne({
+            where: { id: req.params.id },
+            include: [{ model: Bolso }]
+        });
+
+        if (!participant) return res.status(404).json({ error: 'Participant not found' });
+
+        // Security check: only owner of bolso (or admin) can generate link
+        if (!req.user.isAdmin && participant.Bolso.userId !== req.user.id) {
+            return res.status(403).json({ error: 'Not authorized' });
+        }
+
+        // Generate a long-lived JWT (e.g., 30 days) specifically for public access
+        const token = jwt.sign(
+            { participantId: participant.id },
+            process.env.JWT_SECRET,
+            { expiresIn: '30d' }
+        );
+
+        res.json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
 
 // PUT /api/participants/:id
 router.put('/:id', async (req, res) => {

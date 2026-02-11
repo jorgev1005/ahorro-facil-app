@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import LoginView from './components/LoginView'
 import Header from './components/Header'
@@ -14,12 +15,22 @@ import PayoutModal from './components/PayoutModal'
 import LiquidityIndicator from './components/LiquidityIndicator'
 import BolsoReport from './components/BolsoReport'
 import ParticipantReport from './components/ParticipantReport'
+import PublicParticipantView from './components/PublicParticipantView'
 import { generateWhatsAppMessage, openWhatsApp } from './utils/whatsapp'
 import { bolsoService } from './services/api'
 import { formatDate } from './utils/formatters'
 import './App.css'
 
 function App() {
+  return (
+    <Routes>
+      <Route path="/public/participant/:token" element={<PublicParticipantView />} />
+      <Route path="/*" element={<PrivateApp />} />
+    </Routes>
+  );
+}
+
+function PrivateApp() {
   const { user, loading: authLoading } = useAuth();
   const [bolsos, setBolsos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -68,6 +68,10 @@ export const bolsoService = {
         const response = await api.put(`/participants/${id}`, data);
         return response.data;
     },
+    getShareToken: async (id) => {
+        const response = await api.get(`/participants/${id}/share_token`);
+        return response.data;
+    },
 
     // Payments
     registerPayment: async (data) => {

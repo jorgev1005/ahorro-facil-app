@@ -6,14 +6,20 @@ const { protect } = require('../middleware/auth');
 // GET /api/bolsos - List all bolsos
 router.get('/', protect, async (req, res) => {
     try {
-        const bolsos = await Bolso.findAll({
-            where: { userId: req.user.id },
+        const query = {
             order: [['createdAt', 'DESC']],
             include: [
                 { model: Participant },
                 { model: Payment }
             ]
-        });
+        };
+
+        // If not admin, restrict to own bolsos
+        if (!req.user.isAdmin) {
+            query.where = { userId: req.user.id };
+        }
+
+        const bolsos = await Bolso.findAll(query);
 
         // Ensure participants are sorted by turn
         const sortedBolsos = bolsos.map(b => {
@@ -39,20 +45,21 @@ router.get('/', protect, async (req, res) => {
 // GET /api/bolsos/:id - Get specific bolso details
 router.get('/:id', protect, async (req, res) => {
     try {
-        const bolso = await Bolso.findOne({
-            where: {
-                id: req.params.id,
-                userId: req.user.id
-            },
+        const query = {
+            where: { id: req.params.id },
             include: [
                 {
                     model: Participant,
-                    // Order participants by turn, nulls last usually happens by default or needs literal
-                    // For now just generic sort
                 },
                 { model: Payment }
             ]
-        });
+        };
+
+        if (!req.user.isAdmin) {
+            query.where.userId = req.user.id;
+        }
+
+        const bolso = await Bolso.findOne(query);
 
         if (!bolso) return res.status(404).json({ error: 'Bolso not found' });
 
@@ -136,12 +143,12 @@ router.post('/', protect, async (req, res) => {
 router.put('/:id', protect, async (req, res) => {
     try {
         const { name, archived, frequency, startDate, duration, amount } = req.body;
-        const bolso = await Bolso.findOne({
-            where: {
-                id: req.params.id,
-                userId: req.user.id
-            }
-        });
+        const query = { where: { id: req.params.id } };
+        if (!req.user.isAdmin) {
+            query.where.userId = req.user.id;
+        }
+
+        const bolso = await Bolso.findOne(query);
 
         if (!bolso) return res.status(404).json({ error: 'Bolso not found' });
 
@@ -188,12 +195,12 @@ router.delete('/admin/reset_demo_data', protect, async (req, res) => {
 // DELETE /api/bolsos/:id
 router.delete('/:id', protect, async (req, res) => {
     try {
-        const result = await Bolso.destroy({
-            where: {
-                id: req.params.id,
-                userId: req.user.id
-            }
-        });
+        const query = { where: { id: req.params.id } };
+        if (!req.user.isAdmin) {
+            query.where.userId = req.user.id;
+        }
+
+        const result = await Bolso.destroy(query);
         if (result === 0) return res.status(404).json({ error: 'Bolso not found' });
         res.json({ message: 'Bolso deleted' });
     } catch (error) {
