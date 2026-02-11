@@ -62,8 +62,9 @@ export const bolsoService = {
         const response = await api.delete('/bolsos/admin/reset_demo_data');
         return response.data;
     },
+};
 
-    // Participants
+export const participantService = {
     updateParticipant: async (id, data) => {
         const response = await api.put(`/participants/${id}`, data);
         return response.data;
@@ -72,6 +73,7 @@ export const bolsoService = {
         const response = await api.get(`/participants/${id}/share_token`);
         return response.data;
     },
+
 
     // Payments
     registerPayment: async (data) => {
