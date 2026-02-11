@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from './context/AuthContext'
+import LoginView from './components/LoginView'
 import Header from './components/Header'
 import SummaryCard from './components/SummaryCard'
 import ParticipantList from './components/ParticipantList'
@@ -18,6 +20,7 @@ import { formatDate } from './utils/formatters'
 import './App.css'
 
 function App() {
+  const { user, loading: authLoading } = useAuth();
   const [bolsos, setBolsos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeBolsoId, setActiveBolsoId] = useState(null);
@@ -34,8 +37,10 @@ function App() {
 
   // Fetch Bolsos on Mount
   useEffect(() => {
-    fetchBolsos();
-  }, []);
+    if (user) {
+      fetchBolsos();
+    }
+  }, [user]);
 
   const fetchBolsos = async () => {
     try {
@@ -362,8 +367,16 @@ function App() {
     openWhatsApp(text);
   };
 
+  if (authLoading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--ios-blue)' }}>Cargando sesión...</div>;
+  }
+
+  if (!user) {
+    return <LoginView />;
+  }
+
   if (isLoading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>Cargando...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>Cargando datos...</div>;
   }
 
   if (!activeBolsoId) {

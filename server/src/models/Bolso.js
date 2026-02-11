@@ -33,7 +33,14 @@ const Bolso = sequelize.define('Bolso', {
     },
     archived: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+    },
+    userId: {
+        type: DataTypes.UUID,
+        allowNull: true, // Allow null for migration, then enforce later
+        references: {
+            model: 'Users',
+            key: 'id'
+        }
     }
 }, {
     timestamps: true

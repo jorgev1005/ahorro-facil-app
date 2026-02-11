@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { Bolso, Participant, Payment } = require('../models');
+const { protect } = require('../middleware/auth');
 
 // GET /api/bolsos - List all bolsos
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => {
     try {
         const bolsos = await Bolso.findAll({
+            where: { userId: req.user.id },
             order: [['createdAt', 'DESC']],
             include: [
                 { model: Participant },
@@ -35,10 +37,13 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/bolsos/:id - Get specific bolso details
-router.get('/:id', async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
     try {
         const bolso = await Bolso.findOne({
-            where: { id: req.params.id },
+            where: {
+                id: req.params.id,
+                userId: req.user.id
+            },
             include: [
                 {
                     model: Participant,
@@ -69,7 +74,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/bolsos - Create new bolso
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
     try {
         const { name, frequency, startDate, duration, amount, participantsCount } = req.body;
 
@@ -102,7 +107,9 @@ router.post('/', async (req, res) => {
             duration,
             amount,
             schedule,
-            archived: false
+            schedule,
+            archived: false,
+            userId: req.user.id
         });
 
         // Create Participants
@@ -126,10 +133,15 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/bolsos/:id - Update generic fields (like archive)
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
     try {
         const { name, archived, frequency, startDate, duration, amount } = req.body;
-        const bolso = await Bolso.findByPk(req.params.id);
+        const bolso = await Bolso.findOne({
+            where: {
+                id: req.params.id,
+                userId: req.user.id
+            }
+        });
 
         if (!bolso) return res.status(404).json({ error: 'Bolso not found' });
 
@@ -150,7 +162,8 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/bolsos/admin/reset_demo_data - CAUTION: Deletes ALL data
-router.delete('/admin/reset_demo_data', async (req, res) => {
+router.delete('/admin/reset_demo_data', protect, async (req, res) => {
+    if (!req.user.isAdmin) return res.status(403).json({ error: 'Admin only' });
     console.log('RESET DEMO DATA REQUESTED'); // FORCE UPDATE
     try {
         // Transaction safety would be good, but simple cascade is enough for demo
@@ -173,9 +186,14 @@ router.delete('/admin/reset_demo_data', async (req, res) => {
 });
 
 // DELETE /api/bolsos/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
     try {
-        const result = await Bolso.destroy({ where: { id: req.params.id } });
+        const result = await Bolso.destroy({
+            where: {
+                id: req.params.id,
+                userId: req.user.id
+            }
+        });
         if (result === 0) return res.status(404).json({ error: 'Bolso not found' });
         res.json({ message: 'Bolso deleted' });
     } catch (error) {

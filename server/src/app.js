@@ -21,9 +21,11 @@ app.get('/', (req, res) => {
 const bolsoRoutes = require('./routes/bolsos');
 const participantRoutes = require('./routes/participants');
 const paymentRoutes = require('./routes/payments');
+const authRoutes = require('./routes/auth');
 
 app.use('/api/bolsos', bolsoRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/auth', authRoutes);
 
 module.exports = app;
