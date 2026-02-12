@@ -45,9 +45,11 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             console.error("Register failed", error);
+            const errorMessage = error.response?.data?.error || error.message || 'Error al registrarse';
+            alert(`Debug: ${errorMessage}\nStatus: ${error.response?.status}\nURL: ${window.location.origin}`);
             return {
                 success: false,
-                error: error.response?.data?.error || 'Error al registrarse'
+                error: errorMessage
             };
         }
     };
