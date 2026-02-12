@@ -1,7 +1,21 @@
 import axios from 'axios';
 
 // Production URL
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.grupoaludra.com/api';
+// Determine API URL based on environment or hostname
+let API_URL = import.meta.env.VITE_API_URL;
+
+// Fail-safe: If running on production domain, FORCE the correct API URL
+// This handles cases where Vercel env vars might be missing
+if (window.location.hostname === 'ahorro.grupoaludra.com' || window.location.hostname === 'www.ahorro.grupoaludra.com') {
+    API_URL = 'https://api.grupoaludra.com/api';
+}
+
+// Fallback for local development if env is missing
+if (!API_URL) {
+    API_URL = 'http://localhost:3000/api';
+}
+
+console.log('🔌 API URL Configured:', API_URL);
 
 const api = axios.create({
     baseURL: API_URL,
