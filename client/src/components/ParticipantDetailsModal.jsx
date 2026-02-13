@@ -13,6 +13,12 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
     const [isEditingTurn, setIsEditingTurn] = useState(false);
     const [newTurn, setNewTurn] = useState(participant.turn || '');
 
+    // Payout Date Calculation
+    let payoutDateDisplay = null;
+    if (participant.turn && bolso.schedule && bolso.schedule[participant.turn - 1]) {
+        payoutDateDisplay = formatDate(bolso.schedule[participant.turn - 1], { month: 'long', day: 'numeric' });
+    }
+
     // ... (rest of logic same until return)
 
     // Helper for List Click
