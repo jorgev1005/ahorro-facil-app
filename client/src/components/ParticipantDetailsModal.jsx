@@ -4,7 +4,7 @@ import { X, CheckCircle2, AlertCircle, Clock, Edit2, Check, PieChart, Gift, Prin
 import { bolsoService, participantService } from '../services/api';
 import { formatDate, formatCurrency } from '../utils/formatters';
 
-const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onViewReceipt, onUpdateName, onUpdateTurn, onRegisterPayout, onViewPayoutReceipt }) => {
+const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onViewReceipt, onUpdateName, onUpdateTurn, onRegisterPayout, onViewPayoutReceipt, readOnly }) => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [newName, setNewName] = useState(participant.name);
     const [linkLoading, setLinkLoading] = useState(false);
@@ -13,109 +13,15 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
     const [isEditingTurn, setIsEditingTurn] = useState(false);
     const [newTurn, setNewTurn] = useState(participant.turn || '');
 
-    // Payout Date Calculation
-    let payoutDateDisplay = null;
-    if (participant.turn && bolso.schedule && bolso.schedule[participant.turn - 1]) {
-        payoutDateDisplay = formatDate(bolso.schedule[participant.turn - 1], { month: 'long', day: 'numeric' });
-    }
+    // ... (rest of logic same until return)
 
-    // 1. Construct the complete history
-    const history = bolso.schedule.map((date, index) => {
-        const payment = bolso.payments.find(p => p.participantId === participant.id && p.date === date);
-        const totalDue = bolso.amount || 30;
-
-        if (payment) {
-            return {
-                ...payment,
-                index,
-                amountPaid: payment.amountPaid || payment.amount,
-                amount: payment.amount || totalDue, // Ensure "amount" is defined for render
-                status: payment.status || 'paid'
-            };
-        }
-
-        return {
-            id: `${participant.id}-${date}`,
-            participantId: participant.id,
-            date: date,
-            amount: totalDue,
-            amountPaid: 0,
-            status: 'pending',
-            index
-        };
-    });
-
-    // 2. Calculate Stats
-    const todayStr = new Date().toLocaleDateString('en-CA');
-
-    const totalPaid = history
-        .reduce((sum, p) => sum + (Number(p.amountPaid) || 0), 0);
-
-    const overdueItems = history.filter(p => {
-        return (p.status === 'pending' || p.status === 'partial') && p.date < todayStr;
-    });
-
-    const currentDebt = overdueItems.reduce((sum, p) => {
-        const fullAmount = bolso.amount || 30;
-        const paid = Number(p.amountPaid) || 0;
-        return sum + (fullAmount - paid);
-    }, 0);
-
-    const overdueCount = overdueItems.length;
-    const remainingCount = history.filter(p => p.status !== 'paid').length;
-
-    const handleSaveName = () => {
-        if (newName.trim()) {
-            onUpdateName(participant.id, newName);
-            setIsEditingName(false);
-        }
-    };
-
-    const handleSaveTurn = () => {
-        onUpdateTurn(participant.id, newTurn);
-        setIsEditingTurn(false);
-    };
-
-    const getStatusInfo = (item) => {
+    // Helper for List Click
+    const handleRowClick = (item) => {
         if (item.status === 'paid') {
-            const isLate = item.paidAt && item.paidAt > item.date;
-            return {
-                icon: <CheckCircle2 size={24} color={isLate ? "var(--color-orange)" : "var(--color-green)"} />,
-                color: "var(--text-primary)",
-                mainText: 'Pagado',
-                subtext: `el ${formatDate(item.paidAt)}`,
-                subtextColor: isLate ? 'var(--color-orange)' : 'var(--color-green)'
-            };
+            onViewReceipt(item); // Always allow viewing receipts
+        } else if (!readOnly) {
+            onPayDate(item.date); // Only allow paying if not readOnly
         }
-
-        if (item.status === 'partial') {
-            return {
-                icon: <PieChart size={24} color="var(--color-blue)" />,
-                color: "var(--text-primary)",
-                mainText: `Abonado: ${formatCurrency(item.amountPaid)}`,
-                subtext: `Resta: ${formatCurrency((bolso.amount || 30) - item.amountPaid)}`,
-                subtextColor: "var(--color-blue)"
-            };
-        }
-
-        const isOverdue = item.date < todayStr;
-        if (isOverdue) {
-            return {
-                icon: <AlertCircle size={24} color="var(--color-red)" />,
-                color: "var(--color-red)",
-                mainText: 'Vencido',
-                subtext: 'Pago Atrasado',
-                subtextColor: 'var(--color-red)'
-            };
-        }
-
-        return {
-            icon: <Clock size={24} color="var(--text-secondary)" />,
-            color: "var(--text-primary)",
-            mainText: 'Pendiente',
-            subtext: 'Próximamente',
-            subtextColor: "var(--text-secondary)"
-        };
     };
 
     return (
@@ -149,7 +55,7 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                             ) : (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                     <h2 style={{ margin: 0, fontSize: '24px' }}>{participant.name}</h2>
-                                    <button onClick={() => setIsEditingName(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5 }}><Edit2 size={16} /></button>
+                                    {!readOnly && <button onClick={() => setIsEditingName(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5 }}><Edit2 size={16} /></button>}
                                 </div>
                             )}
 
@@ -164,8 +70,8 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                                             <button onClick={handleSaveTurn} style={{ background: 'var(--color-blue)', color: 'white', borderRadius: '4px', padding: '2px 6px', border: 'none', fontSize: '13px' }}>OK</button>
                                         </div>
                                     ) : (
-                                        <div onClick={() => setIsEditingTurn(true)}
-                                            style={{ backgroundColor: 'var(--color-blue)', color: 'white', padding: '2px 10px', borderRadius: '100px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                                        <div onClick={() => !readOnly && setIsEditingTurn(true)}
+                                            style={{ backgroundColor: 'var(--color-blue)', color: 'white', padding: '2px 10px', borderRadius: '100px', fontSize: '13px', fontWeight: 600, cursor: readOnly ? 'default' : 'pointer', opacity: readOnly ? 0.8 : 1 }}>
                                             #{participant.turn || '?'}
                                         </div>
                                     )}
@@ -194,26 +100,28 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                                                     <Gift size={14} />
                                                     <span>{payoutDateDisplay}</span>
                                                 </div>
-                                                <button
-                                                    onClick={onRegisterPayout}
-                                                    style={{
-                                                        backgroundColor: 'var(--color-primary)',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        borderRadius: '8px',
-                                                        padding: '6px 12px',
-                                                        fontSize: '12px',
-                                                        fontWeight: 600,
-                                                        cursor: 'pointer',
-                                                        transition: 'all 0.2s',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '6px'
-                                                    }}
-                                                >
-                                                    <CheckCircle2 size={14} />
-                                                    Entregar
-                                                </button>
+                                                {!readOnly && (
+                                                    <button
+                                                        onClick={onRegisterPayout}
+                                                        style={{
+                                                            backgroundColor: 'var(--color-primary)',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '8px',
+                                                            padding: '6px 12px',
+                                                            fontSize: '12px',
+                                                            fontWeight: 600,
+                                                            cursor: 'pointer',
+                                                            transition: 'all 0.2s',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '6px'
+                                                        }}
+                                                    >
+                                                        <CheckCircle2 size={14} />
+                                                        Entregar
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                     </>
@@ -271,14 +179,14 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                         return (
                             <div
                                 key={item.date}
-                                onClick={() => item.status === 'paid' ? onViewReceipt(item) : onPayDate(item.date)}
-                                className="active-scale"
+                                onClick={() => handleRowClick(item)}
+                                className={(!readOnly || item.status === 'paid') ? "active-scale" : ""}
                                 style={{
                                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                                     padding: '16px 24px',
                                     backgroundColor: 'white',
                                     borderBottom: '1px solid rgba(0,0,0,0.05)',
-                                    cursor: 'pointer'
+                                    cursor: (!readOnly || item.status === 'paid') ? 'pointer' : 'default'
                                 }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

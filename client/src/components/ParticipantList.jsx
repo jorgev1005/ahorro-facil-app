@@ -1,8 +1,9 @@
+```javascript
 import React from 'react';
 import Card from './Card';
 import { CheckCircle2, Circle, Gift } from 'lucide-react';
 
-const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, hasPaidToday, onTogglePayment }) => {
+const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, hasPaidToday, onTogglePayment, readOnly }) => {
     const percentage = Math.round((paidCount / totalCount) * 100);
     const hasReceivedPayout = !!participant.payoutDate;
 
@@ -12,14 +13,15 @@ const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, has
 
     return (
         <div
-            onClick={() => onTogglePayment(participant.id)}
-            className="active-scale"
+            onClick={() => !readOnly && onTogglePayment(participant.id)}
+            className={readOnly ? "" : "active-scale"}
             style={{
                 display: 'flex',
                 alignItems: 'center',
                 padding: '12px 0',
                 borderBottom: '1px solid var(--ios-separator)',
-                cursor: 'pointer'
+                cursor: readOnly ? 'default' : 'pointer',
+                opacity: readOnly ? 0.9 : 1
             }}
         >
             <div style={{ flex: 1, paddingRight: '12px' }}>
@@ -64,7 +66,7 @@ const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, has
                         flex: 1, height: '6px', backgroundColor: '#F2F2F7', borderRadius: '3px', overflow: 'hidden'
                     }}>
                         <div style={{
-                            width: `${percentage}%`, height: '100%', backgroundColor: overdueCount > 0 ? 'var(--color-orange)' : 'var(--ios-green)', borderRadius: '3px'
+                            width: `${ percentage }% `, height: '100%', backgroundColor: overdueCount > 0 ? 'var(--color-orange)' : 'var(--ios-green)', borderRadius: '3px'
                         }} />
                     </div>
                     <span style={{ fontSize: '0.75rem', color: overdueCount > 0 ? 'var(--color-red)' : 'var(--ios-text-secondary)', minWidth: '35px', textAlign: 'right', fontWeight: overdueCount > 0 ? 600 : 400 }}>
@@ -73,23 +75,25 @@ const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, has
                 </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {/* We can still show indicator for "Next Unpaid" or just a generic arrow? 
-             Previously it showed "Today's Status". 
-             Let's keep Today's status if scheduled, otherwise maybe just an arrow > 
-             But user liked toggle. Let's keep toggle but maybe just open details. 
-          */}
-                {hasPaidToday ? (
-                    <CheckCircle2 color="var(--ios-green)" fill="var(--ios-bg)" size={24} />
-                ) : (
-                    <Circle color="var(--ios-separator)" size={24} />
-                )}
-            </div>
+            {!readOnly && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {/* We can still show indicator for "Next Unpaid" or just a generic arrow? 
+                 Previously it showed "Today's Status". 
+                 Let's keep Today's status if scheduled, otherwise maybe just an arrow > 
+                 But user liked toggle. Let's keep toggle but maybe just open details. 
+              */}
+                    {hasPaidToday ? (
+                        <CheckCircle2 color="var(--ios-green)" fill="var(--ios-bg)" size={24} />
+                    ) : (
+                        <Circle color="var(--ios-separator)" size={24} />
+                    )}
+                </div>
+            )}
         </div >
     );
 };
 
-const ParticipantList = ({ participants, payments, bolsoSchedule, currentDate, onTogglePayment }) => {
+const ParticipantList = ({ participants, payments, bolsoSchedule, currentDate, onTogglePayment, readOnly }) => {
     const getPaidCount = (participantId) => {
         return payments.filter(p => p.participantId === participantId).length;
     };
@@ -118,6 +122,7 @@ const ParticipantList = ({ participants, payments, bolsoSchedule, currentDate, o
                         expectedCount={expectedCount}
                         hasPaidToday={isPaidToday(p.id)}
                         onTogglePayment={onTogglePayment}
+                        readOnly={readOnly}
                     />
                 ))}
             </div>

@@ -469,6 +469,7 @@ function PrivateApp() {
         bolsoSchedule={activeBolso.schedule}
         currentDate={today}
         onTogglePayment={handleParticipantClick}
+        readOnly={activeBolso.userId && activeBolso.userId !== user.id}
       />
 
       {/* MODALS */}
@@ -499,6 +500,7 @@ function PrivateApp() {
             setPayoutReceiptParticipant(p);
             setDetailsParticipantId(null);
           }}
+          readOnly={activeBolso.userId && activeBolso.userId !== user.id}
         />
       )}
 
