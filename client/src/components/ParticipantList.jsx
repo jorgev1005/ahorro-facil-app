@@ -1,4 +1,4 @@
-```javascript
+
 import React from 'react';
 import Card from './Card';
 import { CheckCircle2, Circle, Gift } from 'lucide-react';
@@ -66,7 +66,7 @@ const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, has
                         flex: 1, height: '6px', backgroundColor: '#F2F2F7', borderRadius: '3px', overflow: 'hidden'
                     }}>
                         <div style={{
-                            width: `${ percentage }% `, height: '100%', backgroundColor: overdueCount > 0 ? 'var(--color-orange)' : 'var(--ios-green)', borderRadius: '3px'
+                            width: `${percentage}% `, height: '100%', backgroundColor: overdueCount > 0 ? 'var(--color-orange)' : 'var(--ios-green)', borderRadius: '3px'
                         }} />
                     </div>
                     <span style={{ fontSize: '0.75rem', color: overdueCount > 0 ? 'var(--color-red)' : 'var(--ios-text-secondary)', minWidth: '35px', textAlign: 'right', fontWeight: overdueCount > 0 ? 600 : 400 }}>
