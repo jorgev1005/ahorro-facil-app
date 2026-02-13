@@ -19,7 +19,104 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
         payoutDateDisplay = formatDate(bolso.schedule[participant.turn - 1], { month: 'long', day: 'numeric' });
     }
 
-    // ... (rest of logic same until return)
+    // 1. Construct the complete history
+    const history = bolso.schedule.map((date, index) => {
+        const payment = bolso.payments.find(p => p.participantId === participant.id && p.date === date);
+        const totalDue = bolso.amount || 30;
+
+        if (payment) {
+            return {
+                ...payment,
+                index,
+                amountPaid: payment.amountPaid || payment.amount,
+                amount: payment.amount || totalDue, // Ensure "amount" is defined for render
+                status: payment.status || 'paid'
+            };
+        }
+
+        return {
+            id: `${participant.id}-${date}`,
+            participantId: participant.id,
+            date: date,
+            amount: totalDue,
+            amountPaid: 0,
+            status: 'pending',
+            index
+        };
+    });
+
+    // 2. Calculate Stats
+    const todayStr = new Date().toLocaleDateString('en-CA');
+
+    const totalPaid = history
+        .reduce((sum, p) => sum + (Number(p.amountPaid) || 0), 0);
+
+    const overdueItems = history.filter(p => {
+        return (p.status === 'pending' || p.status === 'partial') && p.date < todayStr;
+    });
+
+    const currentDebt = overdueItems.reduce((sum, p) => {
+        const fullAmount = bolso.amount || 30;
+        const paid = Number(p.amountPaid) || 0;
+        return sum + (fullAmount - paid);
+    }, 0);
+
+    const overdueCount = overdueItems.length;
+    const remainingCount = history.filter(p => p.status !== 'paid').length;
+
+    const handleSaveName = () => {
+        if (newName.trim()) {
+            onUpdateName(participant.id, newName);
+            setIsEditingName(false);
+        }
+    };
+
+    const handleSaveTurn = () => {
+        onUpdateTurn(participant.id, newTurn);
+        setIsEditingTurn(false);
+    };
+
+    const getStatusInfo = (item) => {
+        if (item.status === 'paid') {
+            const isLate = item.paidAt && item.paidAt > item.date;
+            return {
+                icon: <CheckCircle2 size={24} color={isLate ? "var(--color-orange)" : "var(--color-green)"} />,
+                color: "var(--text-primary)",
+                mainText: 'Pagado',
+                subtext: `el ${formatDate(item.paidAt)}`,
+                subtextColor: isLate ? 'var(--color-orange)' : 'var(--color-green)'
+            };
+        }
+
+        if (item.status === 'partial') {
+            return {
+                icon: <PieChart size={24} color="var(--color-blue)" />,
+                color: "var(--text-primary)",
+                mainText: `Abonado: ${formatCurrency(item.amountPaid)}`,
+                subtext: `Resta: ${formatCurrency((bolso.amount || 30) - item.amountPaid)}`,
+                subtextColor: "var(--color-blue)"
+            };
+        }
+
+        const isOverdue = item.date < todayStr;
+        if (isOverdue) {
+            return {
+                icon: <AlertCircle size={24} color="var(--color-red)" />,
+                color: "var(--color-red)",
+                mainText: 'Vencido',
+                subtext: 'Pago Atrasado',
+                subtextColor: 'var(--color-red)'
+            };
+        }
+
+        return {
+            icon: <Clock size={24} color="var(--text-secondary)" />,
+            color: "var(--text-primary)",
+            mainText: 'Pendiente',
+            subtext: 'Próximamente',
+            subtextColor: "var(--text-secondary)"
+        };
+    };
 
     // Helper for List Click
     const handleRowClick = (item) => {
