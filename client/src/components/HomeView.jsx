@@ -24,6 +24,11 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
     const displayedMyBolsos = myBolsos.filter(b => showArchived ? !!b.archived : !b.archived);
     const displayedCommunity = communityBolsos.filter(b => showArchived ? !!b.archived : !b.archived);
 
+    const getFirstName = (fullName) => {
+        if (!fullName) return '';
+        return fullName.split(' ')[0];
+    }
+
     return (
         <div className="home-container animate-enter">
             <header style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
