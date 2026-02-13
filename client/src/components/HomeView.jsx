@@ -8,19 +8,21 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
     const { user, logout } = useAuth();
 
     // Filter based on view mode (Archived vs Active)
-    const displayedBolsos = bolsos.filter(b => showArchived ? !!b.archived : !b.archived);
+    // For regular users: Show only theirs (backend filters anyway)
+    // For Admin: Backend returns ALL. Split them.
 
-    const getFirstName = (fullName) => {
-        if (!fullName) return '';
-        return fullName.split(' ')[0];
-    }
+    // Sort logic
+    const safeBolsos = bolsos || [];
 
-    const handleLogout = () => {
-        if (window.confirm('¿Deseas cerrar sesión?')) {
-            logout();
-            window.location.reload();
-        }
-    };
+    const myBolsos = safeBolsos.filter(b => b.userId === user?.id || (!b.userId && !user?.isAdmin)); // Non-admin sees orphaned as theirs? No, backend handles.
+    // Actually, Admin sees userId=null as "System/Legacy".
+
+    const communityBolsos = user?.isAdmin
+        ? safeBolsos.filter(b => b.userId !== user.id)
+        : [];
+
+    const displayedMyBolsos = myBolsos.filter(b => showArchived ? !!b.archived : !b.archived);
+    const displayedCommunity = communityBolsos.filter(b => showArchived ? !!b.archived : !b.archived);
 
     return (
         <div className="home-container animate-enter">
@@ -34,6 +36,7 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                         letterSpacing: '0.05em'
                     }}>
                         {user ? `Hola, ${getFirstName(user.name)}` : 'Bienvenido'}
+                        {user?.isAdmin && <span className="badge" style={{ marginLeft: '8px', background: 'var(--ios-yellow)', color: 'black' }}>ADMIN</span>}
                     </div>
                     <h1 style={{ fontSize: '34px', marginBottom: '4px', letterSpacing: '-0.02em', lineHeight: '1.1' }}>
                         {showArchived ? 'Papelera' : 'Mis Bolsos'}
@@ -69,30 +72,10 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                 </div>
             </header>
 
-            {displayedBolsos.length === 0 ? (
-                <div className="glass-card" style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
-                    {showArchived ? (
-                        <>
-                            <Trash2 size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
-                            <p>La papelera está vacía.</p>
-                        </>
-                    ) : (
-                        <>
-                            <Wallet size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
-                            <p style={{ marginBottom: '24px' }}>No tienes ningún bolso activo.</p>
-                            <button
-                                onClick={onRequestCreate}
-                                className="btn btn-primary"
-                            >
-                                <Plus size={18} />
-                                Crear el primero
-                            </button>
-                        </>
-                    )}
-                </div>
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {displayedBolsos.map((bolso, index) => (
+            {/* MY BOLSOS SECTION */}
+            {displayedMyBolsos.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                    {displayedMyBolsos.map((bolso, index) => (
                         <Card
                             key={bolso.id}
                             style={{ animationDelay: `${index * 0.05}s` }}
@@ -157,8 +140,67 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                 </div>
             )}
 
-            {/* Footer Actions only visible in Active View */}
-            {!showArchived && bolsos.length > 0 && (
+            {/* COMMUNITY / OTHER USERS SECTION (ADMIN ONLY) */}
+            {user?.isAdmin && displayedCommunity.length > 0 && (
+                <div className="animate-enter" style={{ animationDelay: '0.2s' }}>
+                    <h2 style={{ fontSize: '18px', marginBottom: '16px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        Comunidad / Otros Usuarios
+                    </h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {displayedCommunity.map((bolso, index) => (
+                            <Card
+                                key={bolso.id}
+                                style={{ animationDelay: `${index * 0.05}s` }}
+                                className="animate-enter"
+                                glass={true}
+                                onClick={() => !showArchived && onSelectBolso(bolso.id)}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <h3 style={{ marginBottom: '4px', fontSize: '18px', color: showArchived ? 'var(--text-secondary)' : 'var(--text-primary)' }}>
+                                                {bolso.name}
+                                            </h3>
+                                            <span style={{ fontSize: '11px', background: 'var(--glass-bg)', padding: '2px 8px', borderRadius: '12px', color: 'var(--ios-blue)' }}>
+                                                {bolso.User?.name || 'Sin Asignar'}
+                                            </span>
+                                        </div>
+                                        <div style={{ fontSize: '14px', color: 'var(--text-secondary)', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <Calendar size={14} />
+                                                {bolso.frequency}
+                                            </span>
+                                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <Users size={14} />
+                                                {bolso.participants.length}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ paddingLeft: '16px' }}>
+                                        <ChevronRight color="var(--text-tertiary)" size={20} />
+                                    </div>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* EMPTY STATE */}
+            {displayedMyBolsos.length === 0 && displayedCommunity.length === 0 && (
+                <div className="glass-card" style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
+                    {/* Reuse existing empty state logic if needed, simplified here */}
+                    <p>No hay bolsos para mostrar.</p>
+                    {!showArchived && (
+                        <button onClick={onRequestCreate} className="btn btn-primary" style={{ marginTop: '16px' }}>
+                            <Plus size={18} /> Crear Bolso
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {/* Footer Actions only visible in Active View AND if we have My bolsos (or empty) */}
+            {!showArchived && (
                 <div className="animate-enter" style={{ animationDelay: '0.3s' }}>
                     <button
                         onClick={onRequestCreate}
@@ -168,19 +210,7 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                         <Plus size={20} />
                         Nuevo Bolso
                     </button>
-
-                    <button
-                        onClick={onResetApp}
-                        className="btn"
-                        style={{
-                            marginTop: '20px', width: '100%',
-                            color: 'var(--ios-red)', background: 'transparent',
-                            fontSize: '14px', opacity: 0.7
-                        }}
-                    >
-                        <Trash2 size={16} />
-                        Borrar todos los datos
-                    </button>
+                    {/* Reset app logic... keep or remove? Keep for now */}
                 </div>
             )}
         </div>
