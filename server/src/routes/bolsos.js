@@ -17,6 +17,13 @@ router.get('/', protect, async (req, res) => {
         // If not admin, restrict to own bolsos
         if (!req.user.isAdmin) {
             query.where = { userId: req.user.id };
+        } else {
+            // If Admin, include User info to know who owns it
+            const { User } = require('../models');
+            query.include.push({
+                model: User,
+                attributes: ['name', 'email']
+            });
         }
 
         const bolsos = await Bolso.findAll(query);
