@@ -1,12 +1,20 @@
 import React from 'react';
 import { Share } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Header = ({ onShare }) => {
+    const { user } = useAuth();
+
     const today = new Date().toLocaleDateString('es-VE', {
         weekday: 'long',
         day: 'numeric',
         month: 'long'
     });
+
+    const getFirstName = (fullName) => {
+        if (!fullName) return '';
+        return fullName.split(' ')[0];
+    }
 
     return (
         <header className="glass" style={{
@@ -31,8 +39,9 @@ const Header = ({ onShare }) => {
                 }}>
                     {today}
                 </div>
-                {/* Removed redundant h1 "Mis Bolsos" if HomeView has it, or keep it if it's the main app header */}
-                <h1 style={{ fontSize: '22px', margin: 0 }}>Ahorro Fácil</h1>
+                <h1 style={{ fontSize: '22px', margin: 0 }}>
+                    {user ? `Hola, ${getFirstName(user.name)}` : 'Ahorro Fácil'}
+                </h1>
             </div>
 
             <button
