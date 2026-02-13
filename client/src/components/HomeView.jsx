@@ -1,37 +1,72 @@
 import React, { useState } from 'react';
 import Card from './Card';
-import { Plus, ChevronRight, Wallet, Calendar, Users, Trash2, Archive, RefreshCw, XCircle } from 'lucide-react';
+import { Plus, ChevronRight, Wallet, Calendar, Users, Trash2, Archive, RefreshCw, XCircle, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiveBolso, onRestoreBolso, onDeleteBolso }) => {
     const [showArchived, setShowArchived] = useState(false);
+    const { user, logout } = useAuth();
 
     // Filter based on view mode (Archived vs Active)
     const displayedBolsos = bolsos.filter(b => showArchived ? !!b.archived : !b.archived);
+
+    const getFirstName = (fullName) => {
+        if (!fullName) return '';
+        return fullName.split(' ')[0];
+    }
+
+    const handleLogout = () => {
+        if (window.confirm('¿Deseas cerrar sesión?')) {
+            logout();
+            window.location.reload();
+        }
+    };
 
     return (
         <div className="home-container animate-enter">
             <header style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <h1 style={{ fontSize: '34px', marginBottom: '4px', letterSpacing: '-0.02em' }}>
+                    <div className="text-caption" style={{
+                        textTransform: 'capitalize',
+                        marginBottom: '4px',
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        letterSpacing: '0.05em'
+                    }}>
+                        {user ? `Hola, ${getFirstName(user.name)}` : 'Bienvenido'}
+                    </div>
+                    <h1 style={{ fontSize: '34px', marginBottom: '4px', letterSpacing: '-0.02em', lineHeight: '1.1' }}>
                         {showArchived ? 'Papelera' : 'Mis Bolsos'}
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '15px' }}>
-                        {showArchived ? 'Bolsos archivados.' : 'Administra tus grupos.'}
-                    </p>
                 </div>
 
-                <button
-                    onClick={() => setShowArchived(!showArchived)}
-                    className={`btn-icon ${showArchived ? 'active' : ''}`}
-                    style={{
-                        backgroundColor: showArchived ? 'var(--ios-blue)' : 'rgba(255,255,255,0.6)',
-                        color: showArchived ? 'white' : 'var(--text-secondary)',
-                        border: showArchived ? 'none' : '1px solid rgba(255,255,255,0.6)'
-                    }}
-                    title={showArchived ? "Ver Activos" : "Ver Papelera"}
-                >
-                    {showArchived ? <Wallet size={20} color="white" /> : <Archive size={20} />}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                        onClick={() => setShowArchived(!showArchived)}
+                        className={`btn-icon ${showArchived ? 'active' : ''}`}
+                        style={{
+                            backgroundColor: showArchived ? 'var(--ios-blue)' : 'rgba(255,255,255,0.6)',
+                            color: showArchived ? 'white' : 'var(--text-secondary)',
+                            border: showArchived ? 'none' : '1px solid rgba(255,255,255,0.6)'
+                        }}
+                        title={showArchived ? "Ver Activos" : "Ver Papelera"}
+                    >
+                        {showArchived ? <Wallet size={20} color="white" /> : <Archive size={20} />}
+                    </button>
+
+                    <button
+                        onClick={handleLogout}
+                        className="btn-icon"
+                        style={{
+                            backgroundColor: 'rgba(255, 59, 48, 0.1)',
+                            color: 'var(--system-red)',
+                            border: 'none'
+                        }}
+                        title="Cerrar Sesión"
+                    >
+                        <LogOut size={20} />
+                    </button>
+                </div>
             </header>
 
             {displayedBolsos.length === 0 ? (
