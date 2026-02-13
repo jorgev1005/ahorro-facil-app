@@ -1,9 +1,13 @@
-import React from 'react';
-import { Share } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Share, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header = ({ onShare }) => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+
+    useEffect(() => {
+        console.log('👤 Header User State:', user);
+    }, [user]);
 
     const today = new Date().toLocaleDateString('es-VE', {
         weekday: 'long',
@@ -15,6 +19,13 @@ const Header = ({ onShare }) => {
         if (!fullName) return '';
         return fullName.split(' ')[0];
     }
+
+    const handleLogout = () => {
+        if (window.confirm('¿Deseas cerrar sesión?')) {
+            logout();
+            window.location.reload(); // Force reload to clear state cleanly
+        }
+    };
 
     return (
         <header className="glass" style={{
@@ -44,13 +55,26 @@ const Header = ({ onShare }) => {
                 </h1>
             </div>
 
-            <button
-                onClick={onShare}
-                className="btn-icon"
-                aria-label="Compartir"
-            >
-                <Share size={20} style={{ color: 'var(--ios-blue)' }} />
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                    onClick={onShare}
+                    className="btn-icon"
+                    aria-label="Compartir"
+                >
+                    <Share size={20} style={{ color: 'var(--ios-blue)' }} />
+                </button>
+
+                {user && (
+                    <button
+                        onClick={handleLogout}
+                        className="btn-icon"
+                        aria-label="Cerrar Sesión"
+                        style={{ color: 'var(--system-red)' }}
+                    >
+                        <LogOut size={20} />
+                    </button>
+                )}
+            </div>
         </header>
     );
 };
