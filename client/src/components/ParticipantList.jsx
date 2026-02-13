@@ -13,15 +13,15 @@ const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, has
 
     return (
         <div
-            onClick={() => !readOnly && onTogglePayment(participant.id)}
-            className={readOnly ? "" : "active-scale"}
+            onClick={() => onTogglePayment(participant.id)}
+            className="active-scale"
             style={{
                 display: 'flex',
                 alignItems: 'center',
                 padding: '12px 0',
                 borderBottom: '1px solid var(--ios-separator)',
-                cursor: readOnly ? 'default' : 'pointer',
-                opacity: readOnly ? 0.9 : 1
+                cursor: 'pointer',
+                opacity: readOnly ? 0.85 : 1
             }}
         >
             <div style={{ flex: 1, paddingRight: '12px' }}>
