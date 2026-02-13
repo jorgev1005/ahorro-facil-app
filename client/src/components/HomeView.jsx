@@ -29,6 +29,13 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
         return fullName.split(' ')[0];
     }
 
+    const handleLogout = () => {
+        if (window.confirm('¿Deseas cerrar sesión?')) {
+            logout();
+            window.location.reload();
+        }
+    };
+
     return (
         <div className="home-container animate-enter">
             <header style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
