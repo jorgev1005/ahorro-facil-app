@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Lock, Mail, User, ArrowRight, Loader } from 'lucide-react';
+import { Lock, Mail, User, ArrowRight, Loader, Eye, EyeOff } from 'lucide-react';
 
 const LoginView = () => {
     const { login, register } = useAuth();
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [form, setForm] = useState({
         name: '',
@@ -106,14 +107,36 @@ const LoginView = () => {
                         <div style={{ position: 'relative' }}>
                             <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="Contraseña"
                                 value={form.password}
                                 onChange={handleChange}
                                 required
-                                style={{ paddingLeft: '44px' }}
+                                style={{ paddingLeft: '44px', paddingRight: '44px' }}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                style={{
+                                    position: 'absolute',
+                                    right: '16px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'var(--text-tertiary)',
+                                    cursor: 'pointer',
+                                    padding: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 10
+                                }}
+                                title={showPassword ? "Ocultar" : "Mostrar"}
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
                         </div>
                     </div>
 
