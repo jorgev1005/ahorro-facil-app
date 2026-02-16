@@ -76,18 +76,6 @@ export const bolsoService = {
         const response = await api.delete('/bolsos/admin/reset_demo_data');
         return response.data;
     },
-};
-
-export const participantService = {
-    updateParticipant: async (id, data) => {
-        const response = await api.put(`/participants/${id}`, data);
-        return response.data;
-    },
-    getShareToken: async (id) => {
-        const response = await api.get(`/participants/${id}/share_token`);
-        return response.data;
-    },
-
 
     // Payments
     registerPayment: async (data) => {
@@ -97,6 +85,17 @@ export const participantService = {
 
     deletePayment: async (id) => {
         const response = await api.delete(`/payments/${id}`);
+        return response.data;
+    },
+};
+
+export const participantService = {
+    updateParticipant: async (id, data) => {
+        const response = await api.put(`/participants/${id}`, data);
+        return response.data;
+    },
+    getShareToken: async (id) => {
+        const response = await api.get(`/participants/${id}/share_token`);
         return response.data;
     }
 };
