@@ -13,7 +13,10 @@ const PublicParticipantView = () => {
 
     // Use production URL directly since this might be accessed outside main app context/env
     // Or rely on the same build config.
-    const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname.includes('grupoaludra') ? '/api' : 'https://api.grupoaludra.com/api');
+    // Force direct connection to VPS for stability (Bypass Vercel Proxy)
+    const API_URL = window.location.hostname === 'ahorro.grupoaludra.com' || window.location.hostname.includes('grupoaludra')
+        ? 'https://api.grupoaludra.com/api'
+        : (import.meta.env.VITE_API_URL || '/api');
 
     useEffect(() => {
         const fetchData = async () => {
