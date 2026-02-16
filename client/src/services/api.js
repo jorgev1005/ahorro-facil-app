@@ -6,8 +6,9 @@ let API_URL = import.meta.env.VITE_API_URL;
 
 // Fail-safe: If running on production domain, FORCE the correct API URL
 // This handles cases where Vercel env vars might be missing
+// Force direct connection to VPS (Bypass Vercel Proxy for stability)
 if (window.location.hostname === 'ahorro.grupoaludra.com' || window.location.hostname === 'www.ahorro.grupoaludra.com' || window.location.hostname === 'api.grupoaludra.com') {
-    API_URL = '/api';
+    API_URL = 'https://api.grupoaludra.com/api';
 }
 
 // Fallback for local development if env is missing
