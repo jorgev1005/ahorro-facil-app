@@ -137,7 +137,7 @@ const PublicParticipantView = () => {
                                 <div>
                                     <div style={{ fontWeight: 500 }}>Pago Registrado</div>
                                     <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-                                        {formatDate(payment.date, { day: '2-digit', month: 'long', year: 'numeric' })}
+                                        {payment.paidAt ? formatDate(payment.paidAt, { day: '2-digit', month: 'long', year: 'numeric' }) : (payment.scheduledDate ? formatDate(payment.scheduledDate) : 'Fecha desconocida')}
                                     </div>
                                 </div>
                             </div>
