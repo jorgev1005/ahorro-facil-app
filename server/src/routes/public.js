@@ -13,7 +13,18 @@ router.get('/participant/:token', async (req, res) => {
         try {
             decoded = jwt.verify(token, process.env.JWT_SECRET);
         } catch (e) {
-            return res.status(401).json({ error: 'Enlace inválido o expirado' });
+            console.error('JWT Verification Error:', e.message);
+            console.error('Token received:', token);
+            console.error('Secret used (first 5 chars):', process.env.JWT_SECRET);
+            console.error(' Secret available?', !!process.env.JWT_SECRET);
+            return res.status(401).json({
+                error: 'Enlace inválido o expirado',
+                debug: {
+                    message: e.message,
+                    receivedTokenPrefix: token.substring(0, 10),
+                    secretStart: process.env.JWT_SECRET ? process.env.JWT_SECRET.substring(0, 5) : 'NONE'
+                }
+            });
         }
 
         const { participantId } = decoded;

@@ -34,7 +34,8 @@ conn.on('ready', () => {
             echo "--- MOVING FILE ---"
             mv ${REMOTE_TMP} ${REMOTE_DEST}
             
-            echo "--- ENSURING CLIENT DIR ---"
+            echo "--- CLEANING CLIENT DIR ---"
+            rm -rf /var/www/ahorro_facil/client
             mkdir -p /var/www/ahorro_facil/client
             
             echo "--- EXTRACTING ---"

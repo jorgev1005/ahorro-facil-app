@@ -239,7 +239,8 @@ function PrivateApp() {
 
     } catch (error) {
       console.error("Payment Error:", error);
-      alert("Ocurrió un error al procesar el pago.");
+      const msg = error.response?.data?.error || error.message || "Ocurrió un error al procesar el pago.";
+      alert("Error: " + msg);
     }
   };
 

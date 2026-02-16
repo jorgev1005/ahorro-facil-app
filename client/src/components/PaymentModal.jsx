@@ -24,7 +24,8 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
     // Auto-calculate Bs
     useEffect(() => {
         if (currency === 'BS' && exchangeRate) {
-            const rate = parseFloat(exchangeRate);
+            // Fix: Replace comma with dot for calculation
+            const rate = parseFloat(exchangeRate.replace(',', '.'));
             if (!isNaN(rate)) {
                 setAmountBs((amountToPay * rate).toFixed(2));
             } else {
@@ -41,12 +42,13 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
             date: paidDate, // Transaction Date
 
             // Financials
-            paidAmount: parseFloat(amountToPay), // Amount in this transaction
+            // Financials
+            paidAmount: parseFloat(amountToPay.toString().replace(',', '.')), // Amount in this transaction
 
             // Meta
             reference,
             currency,
-            exchangeRate: currency === 'BS' ? parseFloat(exchangeRate) : null,
+            exchangeRate: currency === 'BS' ? parseFloat(exchangeRate.toString().replace(',', '.')) : null,
             amountBs: currency === 'BS' ? parseFloat(amountBs) : null
         });
     };
@@ -153,9 +155,11 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                     </div>
 
                     {/* Exchange Rate Input (Conditional) */}
+                    {/* Exchange Rate Input (Conditional) */}
+                    {/* Exchange Rate Input (Conditional) */}
                     {currency === 'BS' && (
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
-                            <div style={{ flex: 1 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}> {/* minWidth 0 prevents flex item from overflowing */}
                                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Tasa</label>
                                 <input
                                     type="number"
@@ -164,14 +168,18 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                                     onChange={(e) => setExchangeRate(e.target.value)}
                                     placeholder="0.00"
                                     required={currency === 'BS'}
+                                    style={{ width: '100%', boxSizing: 'border-box', maxWidth: '100%' }}
                                 />
                             </div>
-                            <div style={{ flex: 1 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
                                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Total Bs</label>
                                 <div style={{
-                                    padding: '16px', borderRadius: '12px',
+                                    padding: '12px 16px', borderRadius: '12px',
                                     backgroundColor: 'var(--ios-bg)',
-                                    color: 'var(--text-primary)', fontWeight: 600, fontSize: '17px'
+                                    color: 'var(--text-primary)', fontWeight: 600, fontSize: '17px',
+                                    height: '44px', display: 'flex', alignItems: 'center',
+                                    overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                                    width: '100%', boxSizing: 'border-box'
                                 }}>
                                     {amountBs}
                                 </div>

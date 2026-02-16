@@ -13,7 +13,7 @@ const PublicParticipantView = () => {
 
     // Use production URL directly since this might be accessed outside main app context/env
     // Or rely on the same build config.
-    const API_URL = import.meta.env.VITE_API_URL || 'https://bolso-api.grupoaludra.com/api';
+    const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname.includes('grupoaludra') ? '/api' : 'https://api.grupoaludra.com/api');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,8 +21,16 @@ const PublicParticipantView = () => {
                 const response = await axios.get(`${API_URL}/public/participant/${token}`);
                 setData(response.data);
             } catch (err) {
-                console.error(err);
-                setError('Enlace inválido o expirado');
+
+                console.error("FULL ERROR OBJECT:", err);
+                if (err.response?.data?.debug) {
+                    msg = 'DEBUG: ' + JSON.stringify(err.response.data.debug, null, 2);
+                } else if (err.response?.data?.error) {
+                    msg = 'SERVER ERROR: ' + err.response.data.error;
+                } else {
+                    msg = err.message || 'Error de conexión v3';
+                }
+                setError(msg);
             } finally {
                 setLoading(false);
             }
