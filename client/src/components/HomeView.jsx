@@ -225,20 +225,7 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                     {/* Reset app logic... keep or remove? Keep for now */}
                 </div>
             )}
-            {/* DEBUG SECTION */}
-            <div style={{ marginTop: '40px', padding: '10px', background: '#333', color: '#0f0', fontSize: '10px', borderRadius: '8px', opacity: 0.8 }}>
-                <p><strong>DEBUG INFO:</strong></p>
-                <p>User ID: {user?.id} ({user?.name})</p>
-                <p>Is Admin: {user?.isAdmin ? 'Yes' : 'No'}</p>
-                <p>Total Bolsos Fetched: {safeBolsos.length}</p>
-                <p>My Bolsos Count: {myBolsos.length}</p>
-                <hr style={{ borderColor: '#555' }} />
-                {safeBolsos.map(b => (
-                    <p key={b.id}>
-                        Bolso: {b.name} | Owner: {b.userId} | Match: {b.userId === user?.id ? 'YES' : 'NO'} | Archived: {b.archived ? 'YES' : 'NO'}
-                    </p>
-                ))}
-            </div>
+
         </div>
     );
 };
