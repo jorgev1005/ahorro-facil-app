@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { Loader, CheckCircle, Clock } from 'lucide-react';
 import '../index.css'; // Ensure styles are loaded
 
@@ -136,7 +136,9 @@ const PublicParticipantView = () => {
                                 </div>
                                 <div>
                                     <div style={{ fontWeight: 500 }}>Pago Registrado</div>
-                                    <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>{payment.date}</div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
+                                        {formatDate(payment.date, { day: '2-digit', month: 'long', year: 'numeric' })}
+                                    </div>
                                 </div>
                             </div>
                             <div style={{ fontWeight: 600 }}>
