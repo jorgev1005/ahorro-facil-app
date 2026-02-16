@@ -23,6 +23,8 @@ const PublicParticipantView = () => {
             } catch (err) {
 
                 console.error("FULL ERROR OBJECT:", err);
+                let msg = '';
+                console.error("FULL ERROR OBJECT:", err);
                 if (err.response?.data?.debug) {
                     msg = 'DEBUG: ' + JSON.stringify(err.response.data.debug, null, 2);
                 } else if (err.response?.data?.error) {
@@ -51,6 +53,9 @@ const PublicParticipantView = () => {
             <p>{error}</p>
         </div>
     );
+
+
+    if (!data) return null; // Safety check
 
     const { participant, bolso } = data;
     const paidAmount = participant.Payments.reduce((acc, curr) => acc + parseFloat(curr.amountPaid), 0);
