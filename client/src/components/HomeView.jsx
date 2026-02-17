@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import Card from './Card';
 import { Plus, ChevronRight, Wallet, Calendar, Users, Trash2, Archive, RefreshCw, XCircle, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import AdminPanel from './AdminPanel';
+import SubscriptionBanner from './SubscriptionBanner';
 
 const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiveBolso, onRestoreBolso, onDeleteBolso }) => {
     const [showArchived, setShowArchived] = useState(false);
+    const [showAdmin, setShowAdmin] = useState(false);
     const { user, logout } = useAuth();
 
     // Filter based on view mode (Archived vs Active)
@@ -36,8 +39,23 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
         }
     };
 
+    if (showAdmin && user?.isAdmin) {
+        return (
+            <div className="home-container animate-enter">
+                <button
+                    onClick={() => setShowAdmin(false)}
+                    className="mb-4 text-text-secondary flex items-center gap-2 hover:text-primary transition"
+                >
+                    <ChevronRight className="rotate-180" size={20} /> Volver a Bolsos
+                </button>
+                <AdminPanel />
+            </div>
+        );
+    }
+
     return (
         <div className="home-container animate-enter">
+            <SubscriptionBanner />
             <header style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                     <div className="text-caption" style={{
@@ -56,6 +74,20 @@ const HomeView = ({ bolsos, onSelectBolso, onRequestCreate, onResetApp, onArchiv
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px' }}>
+                    {user?.isAdmin && (
+                        <button
+                            onClick={() => setShowAdmin(true)}
+                            className="btn-icon"
+                            style={{
+                                backgroundColor: 'rgba(255,255,255,0.1)',
+                                color: 'var(--text-primary)',
+                                border: '1px solid rgba(255,255,255,0.2)'
+                            }}
+                            title="Panel de Administración"
+                        >
+                            <Users size={20} />
+                        </button>
+                    )}
                     <button
                         onClick={() => setShowArchived(!showArchived)}
                         className={`btn-icon ${showArchived ? 'active' : ''}`}

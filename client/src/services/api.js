@@ -101,4 +101,16 @@ export const participantService = {
     }
 };
 
+export const adminService = {
+    getAllUsers: async () => {
+        const response = await api.get('/admin/users');
+        return response.data;
+    },
+    updateSubscription: async (userId, data) => {
+        // data: { status: 'active', durationDays: 30 }
+        const response = await api.put(`/admin/users/${userId}/subscription`, data);
+        return response.data;
+    }
+};
+
 export default api;

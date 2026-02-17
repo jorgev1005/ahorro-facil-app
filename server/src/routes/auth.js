@@ -27,7 +27,9 @@ router.post('/register', async (req, res) => {
         const user = await User.create({
             name,
             email,
-            password
+            password,
+            subscriptionStatus: 'trial',
+            subscriptionEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days from now
         });
 
         if (user) {

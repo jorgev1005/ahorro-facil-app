@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Bolso, Participant, Payment } = require('../models');
 const { protect } = require('../middleware/auth');
+const { checkSubscription } = require('../middleware/subscription');
 
 // GET /api/bolsos - List all bolsos
 router.get('/', protect, async (req, res) => {
@@ -88,9 +89,12 @@ router.get('/:id', protect, async (req, res) => {
 });
 
 // POST /api/bolsos - Create new bolso
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, checkSubscription, async (req, res) => {
     try {
         const { name, frequency, startDate, duration, amount, participantsCount } = req.body;
+        // ... (rest of the file remains, but I need to be careful with replace)
+        // Actually, I'll use multi_replace to be precise.
+
 
         // Calculate schedule dates
         // Re-implementing calculateSchedule logic here or trusting frontend to send it?
@@ -147,7 +151,7 @@ router.post('/', protect, async (req, res) => {
 });
 
 // PUT /api/bolsos/:id - Update generic fields (like archive)
-router.put('/:id', protect, async (req, res) => {
+router.put('/:id', protect, checkSubscription, async (req, res) => {
     try {
         const { name, archived, frequency, startDate, duration, amount } = req.body;
         const query = { where: { id: req.params.id } };
@@ -200,7 +204,7 @@ router.delete('/admin/reset_demo_data', protect, async (req, res) => {
 });
 
 // DELETE /api/bolsos/:id
-router.delete('/:id', protect, async (req, res) => {
+router.delete('/:id', protect, checkSubscription, async (req, res) => {
     try {
         const query = { where: { id: req.params.id } };
         if (!req.user.isAdmin) {

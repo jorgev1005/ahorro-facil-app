@@ -29,6 +29,7 @@ app.use('/api/bolsos', bolsoRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', require('./routes/admin'));
 app.use('/api/public', publicRoutes);
 
 module.exports = app;

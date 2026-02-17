@@ -36,6 +36,14 @@ const User = sequelize.define('User', {
     isAdmin: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    subscriptionStatus: {
+        type: DataTypes.ENUM('active', 'inactive', 'trial'),
+        defaultValue: 'trial'
+    },
+    subscriptionEndsAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
 }, {
     timestamps: true,
