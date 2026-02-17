@@ -40,19 +40,22 @@ const Header = ({ onShare }) => {
             borderRadius: 'var(--radius-l)',
             border: 'var(--glass-border)',
         }}>
-            <div>
-                <div className="text-caption" style={{
-                    textTransform: 'capitalize',
-                    marginBottom: '4px',
-                    fontWeight: 600,
-                    fontSize: '13px',
-                    letterSpacing: '0.05em'
-                }}>
-                    {today}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <img src="/logo.svg?v=2" alt="Logo" style={{ width: '40px', height: '40px', borderRadius: '50%', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+                <div>
+                    <div className="text-caption" style={{
+                        textTransform: 'capitalize',
+                        marginBottom: '4px',
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        letterSpacing: '0.05em'
+                    }}>
+                        {today}
+                    </div>
+                    <h1 style={{ fontSize: '22px', margin: 0, lineHeight: '1.1' }}>
+                        {user ? `Hola, ${getFirstName(user.name)}` : 'Ahorro Fácil'}
+                    </h1>
                 </div>
-                <h1 style={{ fontSize: '22px', margin: 0 }}>
-                    {user ? `Hola, ${getFirstName(user.name)}` : 'Ahorro Fácil'}
-                </h1>
             </div>
 
             <div style={{ display: 'flex', gap: '8px' }}>

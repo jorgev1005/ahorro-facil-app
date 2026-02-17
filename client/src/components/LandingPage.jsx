@@ -14,10 +14,8 @@ const LandingPage = () => {
 
             {/* Navbar */}
             <nav className="w-full p-6 flex justify-between items-center z-10 glass-card bg-opacity-30 border-b border-white/5 rounded-none fixed top-0 backdrop-blur-md">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
-                        <Wallet size={18} className="text-white" />
-                    </div>
+                <div className="flex items-center gap-3">
+                    <img src="/logo.svg?v=2" alt="Ahorro Fácil Logo" className="w-10 h-10 shadow-lg rounded-full" />
                     <span className="text-xl font-bold tracking-tight">Ahorro Fácil</span>
                 </div>
                 <div className="flex gap-4">
@@ -78,28 +76,52 @@ const LandingPage = () => {
                 </div>
 
                 {/* Mockup / Visual */}
-                <div className="mt-16 w-full max-w-4xl glass-card p-4 rounded-3xl border border-white/10 shadow-2xl relative animate-enter" style={{ animationDelay: '0.2s' }}>
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 rounded-3xl pointer-events-none" />
-                    {/* Simulated Interface */}
-                    <div className="bg-surface rounded-2xl p-6 md:p-10 text-left relative overflow-hidden">
-                        <div className="flex justify-between items-center mb-8">
-                            <div>
-                                <div className="h-2 w-20 bg-text-tertiary/20 rounded mb-2"></div>
-                                <div className="h-6 w-40 bg-text-secondary/20 rounded"></div>
+                {/* CSS Realistic Phone Mockup */}
+                <div className="mt-16 relative w-[300px] h-[600px] bg-black rounded-[3rem] border-8 border-gray-800 shadow-2xl animate-enter" style={{ animationDelay: '0.2s', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+                    {/* Notch */}
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-b-xl z-20"></div>
+
+                    {/* Screen Content */}
+                    <div className="w-full h-full bg-surface rounded-[2.5rem] overflow-hidden relative flex flex-col">
+                        {/* Fake Header */}
+                        <div className="h-32 bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-6 flex flex-col justify-end">
+                            <div className="flex items-center gap-2 mb-2">
+                                <img src="/logo.svg?v=2" className="w-8 h-8 rounded-full" alt="Logo" />
+                                <div className="text-sm font-bold">Hola, Jorge</div>
                             </div>
-                            <div className="h-10 w-10 bg-blue-500/20 rounded-full"></div>
+                            <h2 className="text-2xl font-bold">Mis Bolsos</h2>
                         </div>
-                        <div className="space-y-4">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="h-16 w-full bg-white/5 rounded-xl flex items-center px-4 gap-4">
-                                    <div className="h-8 w-8 bg-white/10 rounded-full"></div>
-                                    <div className="flex-1">
-                                        <div className="h-3 w-24 bg-white/10 rounded mb-2"></div>
-                                        <div className="h-2 w-16 bg-white/5 rounded"></div>
-                                    </div>
-                                    <div className="h-3 w-12 bg-green-400/20 rounded"></div>
+
+                        {/* Fake Cards */}
+                        <div className="p-4 flex-1 space-y-4">
+                            {/* Card 1 */}
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-md">
+                                <div className="flex justify-between mb-2">
+                                    <span className="text-sm font-medium text-blue-300">Viaje 2026</span>
+                                    <span className="text-xs text-text-tertiary">Activo</span>
                                 </div>
-                            ))}
+                                <div className="text-2xl font-bold mb-1">$1,200</div>
+                                <div className="w-full bg-white/10 h-1.5 rounded-full mt-2">
+                                    <div className="bg-green-400 h-1.5 rounded-full w-2/3 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+                                </div>
+                            </div>
+
+                            {/* Card 2 */}
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 backdrop-blur-md opacity-70">
+                                <div className="flex justify-between mb-2">
+                                    <span className="text-sm font-medium text-purple-300">Navidad</span>
+                                    <span className="text-xs text-text-tertiary">Activo</span>
+                                </div>
+                                <div className="text-2xl font-bold mb-1">$500</div>
+                                <div className="w-full bg-white/10 h-1.5 rounded-full mt-2">
+                                    <div className="bg-purple-400 h-1.5 rounded-full w-1/4"></div>
+                                </div>
+                            </div>
+
+                            {/* Glass FAB */}
+                            <div className="absolute bottom-6 right-6 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40">
+                                <span className="text-2xl text-white font-light">+</span>
+                            </div>
                         </div>
                     </div>
                 </div>
