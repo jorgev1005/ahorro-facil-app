@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Lock, Mail, User, ArrowRight, Loader, Eye, EyeOff } from 'lucide-react';
 
+import { useSearchParams } from 'react-router-dom';
+
 const LoginView = () => {
     const { login, register } = useAuth();
-    const [isLogin, setIsLogin] = useState(true);
+    const [searchParams] = useSearchParams();
+    const [isLogin, setIsLogin] = useState(!searchParams.get('register'));
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
