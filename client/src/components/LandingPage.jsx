@@ -15,7 +15,7 @@ const LandingPage = () => {
             {/* Navbar */}
             <nav className="w-full p-6 flex justify-between items-center z-10 glass-card bg-opacity-30 border-b border-white/5 rounded-none fixed top-0 backdrop-blur-md">
                 <div className="flex items-center gap-3">
-                    <img src="/logo.svg?v=2" alt="Ahorro Fácil Logo" className="w-10 h-10 shadow-lg rounded-full" />
+                    <img src="/logo.svg?v=2" alt="Ahorro Fácil Logo" className="w-12 h-12 shadow-lg rounded-full" />
                     <span className="text-xl font-bold tracking-tight">Ahorro Fácil</span>
                 </div>
                 <div className="flex gap-4">
@@ -78,7 +78,8 @@ const LandingPage = () => {
                 {/* Mockup / Visual */}
                 {/* CSS Realistic Phone Mockup */}
                 {/* CSS Realistic Phone Mockup */}
-                <div className="mt-16 relative w-[300px] h-[600px] bg-black rounded-[3rem] border-[8px] border-gray-900 shadow-2xl animate-enter ring-1 ring-white/20" style={{ animationDelay: '0.2s', boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.7), 0 30px 60px -30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05)' }}>
+                {/* CSS Realistic Phone Mockup */}
+                <div className="mt-16 relative w-[300px] h-[600px] bg-gray-950 rounded-[3rem] border-[8px] border-gray-700 shadow-2xl animate-enter ring-1 ring-white/20" style={{ animationDelay: '0.2s', boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.7), 0 30px 60px -30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05)' }}>
                     {/* Notch */}
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-b-xl z-20"></div>
 
@@ -130,7 +131,7 @@ const LandingPage = () => {
 
             {/* Features Section */}
             <section id="features" className="py-24 px-6 relative z-10 bg-black/20 backdrop-blur-lg">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-bold mb-4">Todo lo que necesitas</h2>
                         <p className="text-text-secondary">Diseñado para ser simple, potente y hermoso.</p>
@@ -157,7 +158,7 @@ const LandingPage = () => {
             </section>
 
             {/* Footer */}
-            <footer className="py-8 text-center text-text-tertiary text-sm border-t border-white/5 bg-[#000000]">
+            <footer className="py-8 text-center text-gray-400 text-sm border-t border-white/5 bg-[#000000]">
                 © 2026 Grupo Aludra. Todos los derechos reservados.
             </footer>
         </div>
