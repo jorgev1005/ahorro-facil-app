@@ -15,7 +15,7 @@ const LandingPage = () => {
             {/* Navbar */}
             <nav className="w-full p-6 flex justify-between items-center z-10 glass-card bg-opacity-30 border-b border-white/5 rounded-none fixed top-0 backdrop-blur-md">
                 <div className="flex items-center gap-3">
-                    <img src="/logo.svg?v=2" alt="Ahorro Fácil Logo" className="w-12 h-12 shadow-lg rounded-full" />
+                    <img src="/logo.svg?v=3" alt="Ahorro Fácil Logo" className="w-12 h-12 shadow-lg rounded-full" />
                     <span className="text-xl font-bold tracking-tight">Ahorro Fácil</span>
                 </div>
                 <div className="flex gap-4">
@@ -79,7 +79,7 @@ const LandingPage = () => {
                 {/* CSS Realistic Phone Mockup */}
                 {/* CSS Realistic Phone Mockup */}
                 {/* CSS Realistic Phone Mockup */}
-                <div className="mt-16 relative w-[300px] h-[600px] bg-gray-800 rounded-[3rem] border-[8px] border-gray-600 shadow-2xl animate-enter ring-1 ring-white/20" style={{ animationDelay: '0.2s', boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.7), 0 30px 60px -30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05)' }}>
+                <div className="mt-16 relative w-[300px] h-[600px] bg-gray-700 rounded-[3rem] border-[8px] border-gray-500 shadow-2xl animate-enter ring-1 ring-white/20" style={{ animationDelay: '0.2s', boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.7), 0 30px 60px -30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05)' }}>
                     {/* Notch */}
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-b-xl z-20"></div>
 

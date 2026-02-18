@@ -1,12 +1,33 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="256" cy="256" r="256" fill="#3B82F6"/>
-<path d="M180 360C180 348 200 340 256 340C312 340 332 348 332 360C332 372 312 380 256 380C200 380 180 372 180 360Z" fill="white"/>
-<path d="M180 360C180 375 200 385 256 385C312 385 332 375 332 360" stroke="white" stroke-width="20" stroke-linecap="round"/>
-<path d="M180 310C180 298 200 290 256 290C312 290 332 298 332 310C332 322 312 330 256 330C200 330 180 322 180 310Z" fill="white"/>
-<path d="M180 310C180 325 200 335 256 335C312 335 332 325 332 310" stroke="white" stroke-width="20" stroke-linecap="round"/>
-<path d="M180 260C180 248 200 240 256 240C312 240 332 248 332 260C332 272 312 280 256 280C200 280 180 272 180 260Z" fill="white"/>
-<path d="M180 260C180 275 200 285 256 285C312 285 332 275 332 260" stroke="white" stroke-width="20" stroke-linecap="round"/>
-<path d="M256 240V180" stroke="white" stroke-width="16" stroke-linecap="round"/>
-<path d="M256 180C256 180 210 180 190 140C190 140 180 200 256 200" fill="white"/>
-<path d="M256 180C256 180 300 160 320 120C320 120 330 190 256 180" fill="white"/>
+<defs>
+<linearGradient id="blueGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#3B9AFF"/>
+<stop offset="1" stop-color="#0066CC"/>
+</linearGradient>
+</defs>
+<circle cx="256" cy="256" r="256" fill="url(#blueGrad)"/>
+
+<!-- Icon Group: Scaled and Centered -->
+<g transform="translate(106, 100) scale(0.6)">
+    <!-- Plant -->
+    <path d="M250 150 Q250 220 250 250" stroke="white" stroke-width="15" stroke-linecap="round"/>
+    <path d="M250 250 Q180 200 150 120 Q150 120 220 180 Z" fill="white"/>
+    <path d="M250 250 Q320 200 350 120 Q350 120 280 180 Z" fill="white"/>
+    
+    <!-- Coins Stack -->
+    <!-- Coin 3 (Bottom) -->
+    <path d="M130 380 C130 350 370 350 370 380 C370 410 130 410 130 380" fill="white"/>
+    <path d="M130 380 V410 C130 440 370 440 370 410 V380" fill="white"/>
+    
+    <!-- Coin 2 -->
+    <path d="M130 330 C130 300 370 300 370 330 C370 360 130 360 130 330" fill="white"/>
+    <path d="M130 330 V360 C130 390 370 390 370 360 V330" fill="white"/>
+
+    <!-- Coin 1 -->
+    <path d="M130 280 C130 250 370 250 370 280 C370 310 130 310 130 280" fill="white"/>
+    <path d="M130 280 V310 C130 340 370 340 370 310 V280" fill="white"/>
+
+    <!-- Top Coin Surface -->
+    <ellipse cx="250" cy="280" rx="120" ry="35" fill="white"/>
+</g>
 </svg>
