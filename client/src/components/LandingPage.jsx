@@ -15,7 +15,7 @@ const LandingPage = () => {
             {/* Navbar */}
             <nav className="w-full p-6 flex justify-between items-center z-10 glass-card bg-opacity-30 border-b border-white/5 rounded-none fixed top-0 backdrop-blur-md">
                 <div className="flex items-center gap-3">
-                    <img src="/logo.svg?v=3" alt="Ahorro Fácil Logo" className="w-12 h-12 shadow-lg rounded-full" />
+                    <img src="/logo.svg?v=4" alt="Ahorro Fácil Logo" className="w-12 h-12 shadow-lg rounded-full" />
                     <span className="text-xl font-bold tracking-tight">Ahorro Fácil</span>
                 </div>
                 <div className="flex gap-4">
