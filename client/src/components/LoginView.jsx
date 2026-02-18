@@ -51,6 +51,7 @@ const LoginView = () => {
         }}>
             <div className="glass-card animate-enter" style={{ width: '100%', maxWidth: '400px', padding: '40px 30px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <img src="/logo.svg?v=4" alt="Logo" className="w-20 h-20 mx-auto mb-4 shadow-lg rounded-full" />
                     <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>
                         {isLogin ? 'Bienvenido' : 'Crear Cuenta'}
                     </h1>
