@@ -1,80 +1,36 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
 
-// Generate JWT Helper
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d'
-    });
-};
+// Route to start Google Auth
+router.get('/google', passport.authenticate('google', {
+    scope: ['profile', 'email']
+}));
 
-/* 
- * POST /api/auth/register
- * Register a new user
- */
-router.post('/register', async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
+// Callback route
+router.get('/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login', session: false }),
+    (req, res) => {
+        // Successful authentication, redirect home with token
+        const token = jwt.sign(
+            { id: req.user.id, email: req.user.email, role: req.user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '30d' }
+        );
 
-        const userExists = await User.findOne({ where: { email } });
+        // Determine frontend URL based on environment (or hardcode based on user's setup)
+        // Currently user uses api.grupoaludra.com for frontend in prod
+        // But frontend is actually served statically OR on Vercel. 
+        // Based on Phase 16, Frontend is on Vercel/GitHub pages but also deployed to VPS as static?
+        // Let's assume the frontend will catch the token from query params.
 
-        if (userExists) {
-            return res.status(400).json({ error: 'User already exists' });
-        }
+        // Redirect to Frontend with Token
+        // Using a relative path if served from same domain, or absolute if separate.
+        // Assuming SPA handles routing at /
 
-        const user = await User.create({
-            name,
-            email,
-            password,
-            subscriptionStatus: 'trial',
-            subscriptionEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days from now
-        });
-
-        if (user) {
-            res.status(201).json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                avatar: user.avatar,
-                token: generateToken(user.id)
-            });
-        } else {
-            res.status(400).json({ error: 'Invalid user data' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.redirect(`/?token=${token}`);
     }
-});
-
-/* 
- * POST /api/auth/login
- * Auth user & get token
- */
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        const user = await User.findOne({ where: { email } });
-
-        if (user && (await user.matchPassword(password))) {
-            res.json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                isAdmin: user.isAdmin,
-                avatar: user.avatar,
-                token: generateToken(user.id)
-            });
-        } else {
-            res.status(401).json({ error: 'Invalid email or password' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
+);
 
 module.exports = router;

@@ -49,6 +49,21 @@ function PrivateApp() {
 
   // Fetch Bolsos on Mount
   useEffect(() => {
+    // Check for token in URL (Google Auth redirect)
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (token) {
+      // Save token
+      localStorage.setItem('token', token);
+      // Clear URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      // Reload to let AuthContext pick it up (or manually trigger auth check if exposed)
+      // Since AuthContext checks localStorage on mount, a reload is the simplest way to "login"
+      window.location.reload();
+      return;
+    }
+
     if (user) {
       fetchBolsos();
     }

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const passport = require('./config/passport'); // Import passport config
 
 // Middleware
 // Middleware (CORS configured for production)
@@ -11,6 +12,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+app.use(passport.initialize()); // Initialize passport
 
 // Basic Route for testing
 app.get('/', (req, res) => {
@@ -22,7 +24,7 @@ const bolsoRoutes = require('./routes/bolsos');
 const participantRoutes = require('./routes/participants');
 const paymentRoutes = require('./routes/payments');
 const paymentRoutes = require('./routes/payments');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/auth'); // Ensure this file exists and exports router
 const publicRoutes = require('./routes/public');
 
 app.use('/api/bolsos', bolsoRoutes);
