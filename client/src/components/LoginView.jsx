@@ -151,7 +151,7 @@ const LoginView = () => {
                     </div>
 
                     <a
-                        href="https://api.grupoaludra.com/auth/google"
+                        href="https://api.grupoaludra.com/api/auth/google"
                         className="btn"
                         style={{
                             background: 'white',
