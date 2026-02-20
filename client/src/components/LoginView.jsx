@@ -40,6 +40,7 @@ const LoginView = () => {
         setLoading(false);
     };
 
+    console.log("LoginView v2.1 Loaded - API:", import.meta.env.VITE_API_URL);
     return (
         <div style={{
             display: 'flex',
@@ -150,7 +151,7 @@ const LoginView = () => {
                     </div>
 
                     <a
-                        href={`${import.meta.env.VITE_API_URL}/auth/google`}
+                        href="https://api.grupoaludra.com/auth/google"
                         className="btn"
                         style={{
                             background: 'white',

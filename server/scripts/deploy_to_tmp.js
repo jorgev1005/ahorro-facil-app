@@ -6,7 +6,9 @@ const config = {
     host: '75.119.154.6',
     port: 22,
     username: 'root',
-    password: 'xz18219jl'
+    password: 'xz18219jl',
+    keepaliveInterval: 5000,
+    readyTimeout: 20000
 };
 
 const REMOTE_TMP = '/tmp/dist.tar.gz';
