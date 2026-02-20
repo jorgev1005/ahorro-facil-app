@@ -23,7 +23,6 @@ app.get('/', (req, res) => {
 const bolsoRoutes = require('./routes/bolsos');
 const participantRoutes = require('./routes/participants');
 const paymentRoutes = require('./routes/payments');
-const paymentRoutes = require('./routes/payments');
 const authRoutes = require('./routes/auth'); // Ensure this file exists and exports router
 const publicRoutes = require('./routes/public');
 

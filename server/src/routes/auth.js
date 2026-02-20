@@ -29,7 +29,7 @@ router.get('/google/callback',
         // Using a relative path if served from same domain, or absolute if separate.
         // Assuming SPA handles routing at /
 
-        res.redirect(`/?token=${token}`);
+        res.redirect(`https://ahorro.grupoaludra.com/?token=${token}`);
     }
 );
 

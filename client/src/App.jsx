@@ -54,12 +54,33 @@ function PrivateApp() {
     const token = params.get('token');
 
     if (token) {
-      // Save token
-      localStorage.setItem('token', token);
+      try {
+        // Decode JWT payload to get user info
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const userPayload = JSON.parse(jsonPayload);
+
+        // Save token and user
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify({
+          id: userPayload.id,
+          email: userPayload.email,
+          role: userPayload.role,
+          // Provide defaults as JWT might not contain all fields initially
+          name: userPayload.email.split('@')[0],
+          canEdit: userPayload.role === 'superadmin'
+        }));
+      } catch (e) {
+        console.error("Token parsing error:", e);
+      }
+
       // Clear URL
       window.history.replaceState({}, document.title, window.location.pathname);
-      // Reload to let AuthContext pick it up (or manually trigger auth check if exposed)
-      // Since AuthContext checks localStorage on mount, a reload is the simplest way to "login"
+      // Reload to let AuthContext pick it up
       window.location.reload();
       return;
     }
