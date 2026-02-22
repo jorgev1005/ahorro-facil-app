@@ -70,9 +70,10 @@ function PrivateApp() {
           id: userPayload.id,
           email: userPayload.email,
           role: userPayload.role,
-          // Provide defaults as JWT might not contain all fields initially
-          name: userPayload.email.split('@')[0],
-          canEdit: userPayload.role === 'superadmin'
+          // Use real name if token has it, else email prefix
+          name: userPayload.name || userPayload.email.split('@')[0],
+          canEdit: userPayload.role === 'superadmin' || userPayload.isAdmin,
+          isAdmin: userPayload.isAdmin
         }));
       } catch (e) {
         console.error("Token parsing error:", e);
