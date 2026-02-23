@@ -62,5 +62,35 @@ router.put('/users/:id/subscription', protect, adminOnly, async (req, res) => {
     }
 });
 
+// POST /api/admin/users/:id/notify - Send manual notification
+router.post('/users/:id/notify', protect, adminOnly, async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const endsAt = user.subscriptionEndsAt ? new Date(user.subscriptionEndsAt).toLocaleDateString() : 'N/A';
+
+        const { sendEmail } = require('../services/mailer');
+        await sendEmail({
+            to: user.email,
+            subject: 'Aviso Importante: Estado de tu Suscripción en Ahorro Fácil',
+            html: `
+                <h2>¡Hola ${user.name || ''}!</h2>
+                <p>Este es un aviso administrativo referente a tu cuenta en <b>Ahorro Fácil</b>.</p>
+                <p>Tu periodo de acceso a la plataforma está programado para vencer el día <b>${endsAt}</b>.</p>
+                <p>Si deseas renovar o tienes alguna duda, comunícate con el administrador a la brevedad posible para evitar interrupciones en el servicio.</p>
+                <br/>
+                <p>Saludos,<br/>El equipo de Ahorro Fácil</p>
+            `
+        });
+
+        res.json({ message: 'Notification sent successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
 
 module.exports = router;

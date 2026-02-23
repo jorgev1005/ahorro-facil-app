@@ -110,6 +110,10 @@ export const adminService = {
         // data: { status: 'active', durationDays: 30 }
         const response = await api.put(`/admin/users/${userId}/subscription`, data);
         return response.data;
+    },
+    notifyUser: async (userId) => {
+        const response = await api.post(`/admin/users/${userId}/notify`);
+        return response.data;
     }
 };
 

@@ -9,8 +9,12 @@ async function startServer() {
         console.log('✅ Database connected successfully.');
 
         // Sync Models (alter: true checks current schema and updates it - safe for prod usually, backups recommended)
-        await sequelize.sync({ alter: true });
-        console.log('✅ Database synced.');
+        // await sequelize.sync({ alter: true }); // Temporarily disabling auto-sync to prevent schema drops
+        console.log('✅ Database connected (auto-sync disabled).');
+
+        // Initialize Daily Cron Jobs
+        require('./jobs/subscriptionCron');
+        console.log('✅ Background jobs initialized.');
 
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);

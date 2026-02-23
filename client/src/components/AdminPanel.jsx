@@ -119,6 +119,24 @@ const AdminPanel = () => {
                                         Desactivar
                                     </button>
                                 )}
+                                <button
+                                    onClick={async () => {
+                                        if (!confirm(`¿Enviar notificación de vencimiento a ${user.name}?`)) return;
+                                        setUpdating(user.id);
+                                        try {
+                                            await adminService.notifyUser(user.id);
+                                            alert('Notificación enviada con éxito');
+                                        } catch (e) {
+                                            alert('Error al enviar notificación');
+                                        } finally {
+                                            setUpdating(null);
+                                        }
+                                    }}
+                                    disabled={updating === user.id}
+                                    className="px-4 py-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/30 transition text-sm font-medium"
+                                >
+                                    Notificar
+                                </button>
                             </div>
                         </div>
                     );

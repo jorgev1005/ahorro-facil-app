@@ -23,14 +23,20 @@ passport.use(new GoogleStrategy({
                     user.googleId = profile.id;
                     await user.save();
                 } else {
+                    // Calculate 30-day trial period
+                    const endsAt = new Date();
+                    endsAt.setDate(endsAt.getDate() + 14); // Giving 14 days as per Phase 10 spec (or 30, user mentioned 30, let's stick to 30)
+
+                    endsAt.setDate(endsAt.getDate() + 16); // Total 30 days
+
                     // Create new user
                     user = await User.create({
                         googleId: profile.id,
                         name: profile.displayName,
                         email: email,
-                        // Password can be null or a random string since they login via Google
-                        // We'll leave it null if the model allows, otherwise random
-                        password: null // handled by model allow Null
+                        password: null, // handled by model allow Null
+                        subscriptionStatus: 'trial',
+                        subscriptionEndsAt: endsAt
                     });
                 }
             }
