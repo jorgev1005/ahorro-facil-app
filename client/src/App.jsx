@@ -18,7 +18,7 @@ import BolsoReport from './components/BolsoReport'
 import ParticipantReport from './components/ParticipantReport'
 import PublicParticipantView from './components/PublicParticipantView'
 import { generateWhatsAppMessage, openWhatsApp } from './utils/whatsapp'
-import { bolsoService } from './services/api'
+import { bolsoService, participantService } from './services/api'
 import { formatDate } from './utils/formatters'
 import './App.css'
 
@@ -284,7 +284,7 @@ function PrivateApp() {
 
   const handleUpdateName = async (id, newName) => {
     try {
-      await bolsoService.updateParticipant(id, { name: newName });
+      await participantService.updateParticipant(id, { name: newName });
       // Local update
       const updatedBolsos = bolsos.map(b => {
         if (b.id !== activeBolso.id) return b;
@@ -302,7 +302,7 @@ function PrivateApp() {
 
   const handleUpdateTurn = async (id, newTurn) => {
     try {
-      await bolsoService.updateParticipant(id, { turn: parseInt(newTurn) });
+      await participantService.updateParticipant(id, { turn: parseInt(newTurn) });
       // Refresh to handle sort or manual update
       fetchBolsos(); // Easier for sort logic
     } catch (error) {
