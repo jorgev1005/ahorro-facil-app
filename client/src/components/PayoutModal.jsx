@@ -60,8 +60,8 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Registrar Entrega</h2>
-                    <button onClick={onClose} className="btn-icon" style={{ backgroundColor: 'var(--ios-bg)', boxShadow: 'none' }}>
-                        <X size={20} color="var(--ios-text-secondary)" />
+                    <button type="button" onClick={onClose} className="btn-icon">
+                        <X size={22} color="var(--text-primary)" />
                     </button>
                 </div>
 
@@ -75,7 +75,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
                         <Gift size={32} />
                     </div>
 
-                    <span style={{ fontSize: '15px', color: 'var(--ios-text-secondary)', fontWeight: 500 }}>
+                    <span style={{ fontSize: '15px', color: 'var(--text-secondary)', fontWeight: 500 }}>
                         Entrega para: {participant.name}
                     </span>
 
@@ -88,7 +88,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
 
                     {/* Date Input */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Fecha de Entrega</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Fecha de Entrega</label>
                         <input
                             type="date"
                             value={payoutDate}
@@ -99,7 +99,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
 
                     {/* Amount Input */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Monto a Entregar ($)</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Monto a Entregar ($)</label>
                         <input
                             type="number"
                             value={amountToPay}
@@ -110,7 +110,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
 
                     {/* Currency Toggle */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Moneda de Entrega</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Moneda de Entrega</label>
                         <div style={{ display: 'flex', backgroundColor: 'rgba(118, 118, 128, 0.12)', padding: '2px', borderRadius: '10px' }}>
                             <button
                                 type="button"
@@ -145,7 +145,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
                     {currency === 'BS' && (
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
                             <div style={{ flex: 1 }}>
-                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Tasa</label>
+                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Tasa</label>
                                 <input
                                     type="number"
                                     step="0.01"
@@ -156,7 +156,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Total Bs</label>
+                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Total Bs</label>
                                 <div style={{
                                     padding: '16px', borderRadius: '12px',
                                     backgroundColor: 'var(--ios-bg)',
@@ -170,7 +170,7 @@ const PayoutModal = ({ participant, totalCollected, onClose, onConfirm }) => {
 
                     {/* Reference Input */}
                     <div style={{ marginBottom: '32px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Referencia / Nota</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Referencia / Nota</label>
                         <input
                             type="text"
                             value={reference}

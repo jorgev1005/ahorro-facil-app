@@ -72,13 +72,13 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Registrar Pago</h2>
-                    <button onClick={onClose} className="btn-icon" style={{ backgroundColor: 'var(--ios-bg)', boxShadow: 'none' }}>
-                        <X size={20} color="var(--ios-text-secondary)" />
+                    <button type="button" onClick={onClose} className="btn-icon">
+                        <X size={22} color="var(--text-primary)" />
                     </button>
                 </div>
 
                 <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '15px', color: 'var(--ios-text-secondary)', fontWeight: 500 }}>{participant.name}</span>
+                    <span style={{ fontSize: '15px', color: 'var(--text-secondary)', fontWeight: 500 }}>{participant.name}</span>
 
                     {/* Amount Display */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
@@ -90,7 +90,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                                 Abonado: ${existingPaid} · Resta: ${remaining}
                             </div>
                         )}
-                        <div style={{ fontSize: '13px', color: 'var(--ios-text-secondary)', marginTop: '4px' }}>
+                        <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
                             Fecha Corresp.: {formatDate(targetDate)}
                         </div>
                     </div>
@@ -100,7 +100,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
 
                     {/* Amount Input */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Monto a Pagar ($)</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Monto a Pagar ($)</label>
                         <input
                             type="number"
                             value={amountToPay}
@@ -112,7 +112,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
 
                     {/* Date Input */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Fecha Real del Pago</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Fecha Real del Pago</label>
                         <input
                             type="date"
                             value={paidDate}
@@ -123,7 +123,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
 
                     {/* Currency Toggle */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Moneda</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Moneda</label>
                         <div style={{ display: 'flex', backgroundColor: 'rgba(118, 118, 128, 0.12)', padding: '2px', borderRadius: '10px' }}>
                             <button
                                 type="button"
@@ -160,7 +160,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                     {currency === 'BS' && (
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
                             <div style={{ flex: 1, minWidth: 0 }}> {/* minWidth 0 prevents flex item from overflowing */}
-                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Tasa</label>
+                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Tasa</label>
                                 <input
                                     type="number"
                                     step="0.01"
@@ -172,7 +172,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
                                 />
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
-                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Total Bs</label>
+                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Total Bs</label>
                                 <div style={{
                                     padding: '12px 16px', borderRadius: '12px',
                                     backgroundColor: 'var(--ios-bg)',
@@ -189,7 +189,7 @@ const PaymentModal = ({ payment, participant, scheduledDate, totalAmount = 30, o
 
                     {/* Reference Input */}
                     <div style={{ marginBottom: '32px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase' }}>Referencia / Nota</label>
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Referencia / Nota</label>
                         <input
                             type="text"
                             value={reference}

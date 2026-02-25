@@ -69,7 +69,7 @@ const ParticipantRow = ({ participant, paidCount, totalCount, expectedCount, has
                             width: `${percentage}% `, height: '100%', backgroundColor: overdueCount > 0 ? 'var(--color-orange)' : 'var(--ios-green)', borderRadius: '3px'
                         }} />
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: overdueCount > 0 ? 'var(--color-red)' : 'var(--ios-text-secondary)', minWidth: '35px', textAlign: 'right', fontWeight: overdueCount > 0 ? 600 : 400 }}>
+                    <span style={{ fontSize: '0.75rem', color: overdueCount > 0 ? 'var(--color-red)' : 'var(--text-secondary)', minWidth: '35px', textAlign: 'right', fontWeight: overdueCount > 0 ? 600 : 400 }}>
                         {paidCount}/{totalCount}
                     </span>
                 </div>
@@ -109,7 +109,7 @@ const ParticipantList = ({ participants, payments, bolsoSchedule, currentDate, o
 
     return (
         <Card>
-            <h3 style={{ marginBottom: '12px', color: 'var(--ios-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem' }}>
+            <h3 style={{ marginBottom: '12px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem' }}>
                 Participantes
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column' }}>

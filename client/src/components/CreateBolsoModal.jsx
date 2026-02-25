@@ -70,8 +70,8 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Nuevo Bolso</h2>
-                    <button onClick={onClose} className="btn-icon" style={{ backgroundColor: 'var(--ios-bg)', boxShadow: 'none' }}>
-                        <X size={20} color="var(--ios-text-secondary)" />
+                    <button type="button" onClick={onClose} className="btn-icon">
+                        <X size={22} color="var(--text-primary)" />
                     </button>
                 </div>
 
@@ -173,7 +173,7 @@ const CreateBolsoModal = ({ onClose, onCreate }) => {
 };
 
 const labelStyle = {
-    display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ios-text-secondary)', textTransform: 'uppercase'
+    display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase'
 };
 
 export default CreateBolsoModal;
