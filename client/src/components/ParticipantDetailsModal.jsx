@@ -163,7 +163,7 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                             )}
 
                             {/* Turn & Payout Info */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Turno:</span>
                                     {isEditingTurn ? (
@@ -207,7 +207,7 @@ const ParticipantDetailsModal = ({ participant, bolso, onClose, onPayDate, onVie
                                                     <button
                                                         onClick={onRegisterPayout}
                                                         style={{
-                                                            backgroundColor: 'var(--color-primary)',
+                                                            backgroundColor: 'var(--color-blue)',
                                                             color: 'white',
                                                             border: 'none',
                                                             borderRadius: '8px',

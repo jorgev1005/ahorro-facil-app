@@ -333,7 +333,7 @@ function PrivateApp() {
     const { participantId } = payoutModalState;
 
     try {
-      const updatedParticipant = await bolsoService.updateParticipant(participantId, payoutData);
+      const updatedParticipant = await participantService.updateParticipant(participantId, payoutData);
 
       // Update Local State
       const updatedBolsos = bolsos.map(b => {
