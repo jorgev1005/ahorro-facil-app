@@ -21,6 +21,60 @@ import { generateWhatsAppMessage, openWhatsApp } from './utils/whatsapp'
 import { bolsoService, participantService } from './services/api'
 import { formatDate } from './utils/formatters'
 import './App.css'
+import './App.css'
+
+const SubscriptionBanner = ({ user }) => {
+  if (!user || user.isAdmin || !user.subscriptionEndsAt) return null;
+  
+  const today = new Date();
+  const endsAt = new Date(user.subscriptionEndsAt);
+  const daysLeft = Math.ceil((endsAt - today) / (1000 * 60 * 60 * 24));
+  
+  if (daysLeft > 5) return null;
+
+  const isExpired = daysLeft <= 0;
+  
+  return (
+    <div style={{
+      backgroundColor: isExpired ? '#ffebee' : '#fff3e0',
+      color: isExpired ? '#c62828' : '#e65100',
+      padding: '10px 15px',
+      textAlign: 'center',
+      fontSize: '0.9rem',
+      fontWeight: '500',
+      borderBottom: `1px solid ${isExpired ? '#ef9a9a' : '#ffcc80'}`,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '8px'
+    }}>
+      <span>
+        {isExpired 
+          ? 'Tu periodo de prueba ha expirado. '
+          : `Tu periodo de prueba vence en ${daysLeft} ${daysLeft === 1 ? 'día' : 'días'}. `
+        }
+      </span>
+      <button 
+        onClick={() => {
+          const msg = "Hola, necesito renovar mi suscripción de Ahorro Fácil.";
+          openWhatsApp(msg);
+        }}
+        style={{
+          background: isExpired ? '#c62828' : '#e65100',
+          color: 'white',
+          border: 'none',
+          padding: '6px 12px',
+          borderRadius: '15px',
+          fontSize: '0.8rem',
+          fontWeight: 'bold',
+          cursor: 'pointer'
+        }}
+      >
+        Contactar por WhatsApp
+      </button>
+    </div>
+  );
+};
 
 function App() {
   return (
@@ -73,7 +127,9 @@ function PrivateApp() {
           // Use real name if token has it, else email prefix
           name: userPayload.name || userPayload.email.split('@')[0],
           canEdit: userPayload.role === 'superadmin' || userPayload.isAdmin,
-          isAdmin: userPayload.isAdmin
+          isAdmin: userPayload.isAdmin,
+          subscriptionEndsAt: userPayload.subscriptionEndsAt,
+          subscriptionStatus: userPayload.subscriptionStatus
         }));
       } catch (e) {
         console.error("Token parsing error:", e);
@@ -439,6 +495,7 @@ function PrivateApp() {
   if (!activeBolsoId) {
     return (
       <>
+        <SubscriptionBanner user={user} />
         <HomeView
           bolsos={bolsos}
           onSelectBolso={setActiveBolsoId}
@@ -467,7 +524,8 @@ function PrivateApp() {
 
   return (
     <div className="app-container">
-      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
+      <SubscriptionBanner user={user} />
+      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
         <button
           onClick={() => setActiveBolsoId(null)}
           style={{ color: 'var(--ios-blue)', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}

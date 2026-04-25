@@ -9,15 +9,15 @@ const checkSubscriptions = async () => {
         const today = new Date();
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const next3Days = new Date(today);
-        next3Days.setDate(next3Days.getDate() + 3);
+        const next5Days = new Date(today);
+        next5Days.setDate(next5Days.getDate() + 5);
 
         // Find users expiring in next 3 days, or exactly expiring tomorrow, or already expired but still 'trial'/'active'
         const users = await User.findAll({
             where: {
                 isAdmin: false, // Don't bother admins
                 subscriptionEndsAt: {
-                    [Op.lte]: next3Days // Less than or equal to 3 days from now
+                    [Op.lte]: next5Days // Less than or equal to 5 days from now
                 },
                 subscriptionStatus: ['active', 'trial'] // Avoid sending to already expired if we update status
             }
@@ -47,8 +47,8 @@ const checkSubscriptions = async () => {
                         <p>Saludos,<br/>El equipo de Ahorro Fácil</p>
                     `
                 });
-            } else if (daysLeft === 3 || daysLeft === 1) {
-                // Expiring in exactly 3 or 1 days (to avoid spamming every day)
+            } else if (daysLeft === 5 || daysLeft === 3 || daysLeft === 1) {
+                // Expiring in exactly 5, 3 or 1 days
                 expiringUsers.push({ user, daysLeft });
 
                 await sendEmail({

@@ -24,10 +24,26 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'El usuario ya existe' });
         }
         
-        const user = await User.create({ name, email, password });
+        const subscriptionEndsAt = new Date();
+        subscriptionEndsAt.setDate(subscriptionEndsAt.getDate() + 30);
+        
+        const user = await User.create({ 
+            name, 
+            email, 
+            password,
+            subscriptionEndsAt,
+            subscriptionStatus: 'trial'
+        });
         
         const token = jwt.sign(
-            { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin },
+            { 
+                id: user.id, 
+                email: user.email, 
+                name: user.name, 
+                isAdmin: user.isAdmin,
+                subscriptionEndsAt: user.subscriptionEndsAt,
+                subscriptionStatus: user.subscriptionStatus
+            },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
@@ -69,7 +85,14 @@ router.post('/login', async (req, res) => {
         }
         
         const token = jwt.sign(
-            { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin },
+            { 
+                id: user.id, 
+                email: user.email, 
+                name: user.name, 
+                isAdmin: user.isAdmin,
+                subscriptionEndsAt: user.subscriptionEndsAt,
+                subscriptionStatus: user.subscriptionStatus
+            },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
@@ -98,7 +121,9 @@ router.get('/google/callback',
                 email: req.user.email,
                 role: req.user.role,
                 name: req.user.name,
-                isAdmin: req.user.isAdmin
+                isAdmin: req.user.isAdmin,
+                subscriptionEndsAt: req.user.subscriptionEndsAt,
+                subscriptionStatus: req.user.subscriptionStatus
             },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
