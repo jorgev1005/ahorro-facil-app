@@ -136,7 +136,8 @@ function PrivateApp() {
       setShowCreateModal(false);
     } catch (error) {
       console.error("Error creating bolso:", error);
-      alert("Error al crear el bolso.");
+      const msg = error.response?.data?.error || "Error al crear el bolso.";
+      alert(msg);
     }
   };
 

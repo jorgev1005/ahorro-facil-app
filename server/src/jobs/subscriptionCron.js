@@ -15,7 +15,7 @@ const checkSubscriptions = async () => {
         // Find users expiring in next 3 days, or exactly expiring tomorrow, or already expired but still 'trial'/'active'
         const users = await User.findAll({
             where: {
-                role: { [Op.ne]: 'superadmin' }, // Don't bother superadmins
+                isAdmin: false, // Don't bother admins
                 subscriptionEndsAt: {
                     [Op.lte]: next3Days // Less than or equal to 3 days from now
                 },
