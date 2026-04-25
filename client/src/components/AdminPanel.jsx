@@ -74,15 +74,29 @@ const AdminPanel = () => {
 
             <div className="grid gap-4">
                 {filteredUsers.map(user => {
-                    const isExpired = user.subscriptionStatus !== 'active' && (!user.subscriptionEndsAt || new Date(user.subscriptionEndsAt) < new Date());
+                    const today = new Date();
+                    const endsAt = user.subscriptionEndsAt ? new Date(user.subscriptionEndsAt) : null;
+                    const daysLeft = endsAt ? Math.ceil((endsAt - today) / (1000 * 60 * 60 * 24)) : 0;
+                    
+                    const isExpired = user.subscriptionStatus === 'expired' || (endsAt && daysLeft <= 0);
+                    const isExpiringSoon = !isExpired && endsAt && daysLeft <= 5;
+
                     const statusColor = user.subscriptionStatus === 'active' ? 'text-green-400' :
                         user.subscriptionStatus === 'trial' ? 'text-blue-400' : 'text-red-400';
 
+                    let borderClass = 'border border-white/5';
+                    if (isExpired) borderClass = 'border-2 border-red-500/50';
+                    else if (isExpiringSoon) borderClass = 'border-2 border-orange-500/50';
+
                     return (
-                        <div key={user.id} className="glass-card p-4 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div key={user.id} className={`glass-card p-4 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 ${borderClass}`}>
                             <div className="flex-1">
-                                <h3 className="text-lg font-semibold text-text-primary">{user.name}</h3>
-                                <p className="text-sm text-text-secondary">{user.email}</p>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-lg font-semibold text-text-primary">{user.name}</h3>
+                                    {isExpired && <span className="bg-red-500/20 text-red-400 text-xs px-2 py-1 rounded-full font-bold border border-red-500/30">¡Vencido!</span>}
+                                    {isExpiringSoon && <span className="bg-orange-500/20 text-orange-400 text-xs px-2 py-1 rounded-full font-bold border border-orange-500/30">Expira en {daysLeft}d</span>}
+                                </div>
+                                <p className="text-sm text-text-secondary mt-1">{user.email}</p>
                                 <div className="flex items-center gap-2 mt-2 text-sm">
                                     <span className={`font-medium ${statusColor} capitalize`}>
                                         {user.subscriptionStatus === 'trial' ? 'Prueba Gratis' :
